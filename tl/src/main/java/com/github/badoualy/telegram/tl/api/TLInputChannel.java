@@ -20,25 +20,25 @@ import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_INT64;
  */
 public class TLInputChannel extends TLAbsInputChannel {
 
-    public static final int CONSTRUCTOR_ID = 0xafeb712e;
+    public static final int CONSTRUCTOR_ID = 0xf35aec28;
 
-    protected int channelId;
+    protected long channelId;
 
     protected long accessHash;
 
-    private final String _constructor = "inputChannel#afeb712e";
+    private final String _constructor = "inputChannel#f35aec28";
 
     public TLInputChannel() {
     }
 
-    public TLInputChannel(int channelId, long accessHash) {
+    public TLInputChannel(long channelId, long accessHash) {
         this.channelId = channelId;
         this.accessHash = accessHash;
     }
 
     @Override
     public void serializeBody(OutputStream stream) throws IOException {
-        writeInt(channelId, stream);
+        writeLong(channelId, stream);
         writeLong(accessHash, stream);
     }
 
@@ -52,7 +52,7 @@ public class TLInputChannel extends TLAbsInputChannel {
     @Override
     public int computeSerializedSize() {
         int size = SIZE_CONSTRUCTOR_ID;
-        size += SIZE_INT32;
+        size += SIZE_INT64;
         size += SIZE_INT64;
         return size;
     }
@@ -67,11 +67,11 @@ public class TLInputChannel extends TLAbsInputChannel {
         return CONSTRUCTOR_ID;
     }
 
-    public int getChannelId() {
+    public long getChannelId() {
         return channelId;
     }
 
-    public void setChannelId(int channelId) {
+    public void setChannelId(long channelId) {
         this.channelId = channelId;
     }
 

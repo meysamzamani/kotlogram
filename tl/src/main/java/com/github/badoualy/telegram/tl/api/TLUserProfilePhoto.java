@@ -1,17 +1,14 @@
 package com.github.badoualy.telegram.tl.api;
 
 import com.github.badoualy.telegram.tl.TLContext;
+import com.github.badoualy.telegram.tl.core.TLBytes;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static com.github.badoualy.telegram.tl.StreamUtils.readLong;
-import static com.github.badoualy.telegram.tl.StreamUtils.readTLObject;
-import static com.github.badoualy.telegram.tl.StreamUtils.writeLong;
-import static com.github.badoualy.telegram.tl.StreamUtils.writeTLObject;
-import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_CONSTRUCTOR_ID;
-import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_INT64;
+import static com.github.badoualy.telegram.tl.StreamUtils.*;
+import static com.github.badoualy.telegram.tl.TLObjectUtils.*;
 
 /**
  * @author Yannick Badoual yann.badoual@gmail.com
@@ -19,46 +16,65 @@ import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_INT64;
  */
 public class TLUserProfilePhoto extends TLAbsUserProfilePhoto {
 
-    public static final int CONSTRUCTOR_ID = 0xd559d8c8;
+    public static final int CONSTRUCTOR_ID = 0x82d1f706;
+
+    protected int flags;
+
+    protected boolean hasVideo;
 
     protected long photoId;
 
-    protected TLAbsFileLocation photoSmall;
+    protected TLBytes strippedThumb;
 
-    protected TLAbsFileLocation photoBig;
+    protected int dcId;
 
-    private final String _constructor = "userProfilePhoto#d559d8c8";
+    private final String _constructor = "userProfilePhoto#82d1f706";
 
     public TLUserProfilePhoto() {
     }
 
-    public TLUserProfilePhoto(long photoId, TLAbsFileLocation photoSmall, TLAbsFileLocation photoBig) {
+    public TLUserProfilePhoto(boolean hasVideo, long photoId, TLBytes strippedThumb, int dcId) {
+        this.hasVideo = hasVideo;
         this.photoId = photoId;
-        this.photoSmall = photoSmall;
-        this.photoBig = photoBig;
+        this.strippedThumb = strippedThumb;
+        this.dcId = dcId;
+    }
+
+    private void computeFlags() {
+        flags = 0;
+        flags = hasVideo ? (flags | 1) : (flags & ~1);
+        flags = strippedThumb != null ? (flags | 2) : (flags & ~2);
     }
 
     @Override
     public void serializeBody(OutputStream stream) throws IOException {
         writeLong(photoId, stream);
-        writeTLObject(photoSmall, stream);
-        writeTLObject(photoBig, stream);
+        if ((flags & 2) != 0) {
+            if (strippedThumb == null) throwNullFieldException("strippedThumb", flags);
+            writeTLBytes(strippedThumb, stream);
+        }
+        writeInt(dcId, stream);
     }
 
     @Override
     @SuppressWarnings({"unchecked", "SimplifiableConditionalExpression"})
     public void deserializeBody(InputStream stream, TLContext context) throws IOException {
+        flags = readInt(stream);
+        hasVideo = (flags & 1) != 0;
         photoId = readLong(stream);
-        photoSmall = readTLObject(stream, context, TLAbsFileLocation.class, -1);
-        photoBig = readTLObject(stream, context, TLAbsFileLocation.class, -1);
+        strippedThumb = (flags & 2) != 0 ? readTLBytes(stream, context) : null;
+        dcId = readInt(stream);
     }
 
     @Override
     public int computeSerializedSize() {
         int size = SIZE_CONSTRUCTOR_ID;
         size += SIZE_INT64;
-        size += photoSmall.computeSerializedSize();
-        size += photoBig.computeSerializedSize();
+        if ((flags & 2) != 0) {
+            if (strippedThumb == null) throwNullFieldException("strippedThumb", flags);
+            size += computeTLBytesSerializedSize(strippedThumb);
+        }
+        size += SIZE_INT32;
         return size;
     }
 
@@ -70,30 +86,6 @@ public class TLUserProfilePhoto extends TLAbsUserProfilePhoto {
     @Override
     public int getConstructorId() {
         return CONSTRUCTOR_ID;
-    }
-
-    public long getPhotoId() {
-        return photoId;
-    }
-
-    public void setPhotoId(long photoId) {
-        this.photoId = photoId;
-    }
-
-    public TLAbsFileLocation getPhotoSmall() {
-        return photoSmall;
-    }
-
-    public void setPhotoSmall(TLAbsFileLocation photoSmall) {
-        this.photoSmall = photoSmall;
-    }
-
-    public TLAbsFileLocation getPhotoBig() {
-        return photoBig;
-    }
-
-    public void setPhotoBig(TLAbsFileLocation photoBig) {
-        this.photoBig = photoBig;
     }
 
     @Override
@@ -109,5 +101,37 @@ public class TLUserProfilePhoto extends TLAbsUserProfilePhoto {
     @Override
     public final TLUserProfilePhoto getAsUserProfilePhoto() {
         return this;
+    }
+
+    public boolean isHasVideo() {
+        return hasVideo;
+    }
+
+    public void setHasVideo(boolean hasVideo) {
+        this.hasVideo = hasVideo;
+    }
+
+    public long getPhotoId() {
+        return photoId;
+    }
+
+    public void setPhotoId(long photoId) {
+        this.photoId = photoId;
+    }
+
+    public TLBytes getStrippedThumb() {
+        return strippedThumb;
+    }
+
+    public void setStrippedThumb(TLBytes strippedThumb) {
+        this.strippedThumb = strippedThumb;
+    }
+
+    public int getDcId() {
+        return dcId;
+    }
+
+    public void setDcId(int dcId) {
+        this.dcId = dcId;
     }
 }

@@ -8,7 +8,7 @@ import com.github.badoualy.telegram.tl.core.TLObject;
  * <li>{@link TLChannel}: channel#a14dca52</li>
  * <li>{@link TLChannelForbidden}: channelForbidden#8537784f</li>
  * <li>{@link TLChat}: chat#d91cdd54</li>
- * <li>{@link TLChatEmpty}: chatEmpty#9ba2d800</li>
+ * <li>{@link TLChatEmpty}: chatEmpty#29562865</li>
  * <li>{@link TLChatForbidden}: chatForbidden#7328bdb</li>
  * </ul>
  *
@@ -17,16 +17,16 @@ import com.github.badoualy.telegram.tl.core.TLObject;
  */
 public abstract class TLAbsChat extends TLObject {
 
-    protected int id;
+    protected long id;
 
     public TLAbsChat() {
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 }

@@ -5,8 +5,8 @@ import com.github.badoualy.telegram.tl.core.TLObject;
 /**
  * Abstraction level for the following constructors:
  * <ul>
- * <li>{@link TLPhotoCachedSize}: photoCachedSize#e9a734fa</li>
- * <li>{@link TLPhotoSize}: photoSize#77bfb61b</li>
+ * <li>{@link TLPhotoCachedSize}: photoCachedSize#21e1ad6</li>
+ * <li>{@link TLPhotoSize}: photoSize#75c78e60</li>
  * <li>{@link TLPhotoSizeEmpty}: photoSizeEmpty#e17e23c</li>
  * </ul>
  *

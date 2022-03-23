@@ -1,6 +1,7 @@
 package com.github.badoualy.telegram.tl.api.request;
 
 import com.github.badoualy.telegram.tl.TLContext;
+import com.github.badoualy.telegram.tl.api.TLAbsInputCheckPasswordSRP;
 import com.github.badoualy.telegram.tl.api.auth.TLAuthorization;
 import com.github.badoualy.telegram.tl.core.TLBytes;
 import com.github.badoualy.telegram.tl.core.TLMethod;
@@ -10,9 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static com.github.badoualy.telegram.tl.StreamUtils.readTLBytes;
-import static com.github.badoualy.telegram.tl.StreamUtils.readTLObject;
-import static com.github.badoualy.telegram.tl.StreamUtils.writeTLBytes;
+import static com.github.badoualy.telegram.tl.StreamUtils.*;
 import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_CONSTRUCTOR_ID;
 import static com.github.badoualy.telegram.tl.TLObjectUtils.computeTLBytesSerializedSize;
 
@@ -22,17 +21,17 @@ import static com.github.badoualy.telegram.tl.TLObjectUtils.computeTLBytesSerial
  */
 public class TLRequestAuthCheckPassword extends TLMethod<TLAuthorization> {
 
-    public static final int CONSTRUCTOR_ID = 0xa63011e;
+    public static final int CONSTRUCTOR_ID = 0xd18b4d16;
 
-    protected TLBytes passwordHash;
+    protected TLAbsInputCheckPasswordSRP password;
 
-    private final String _constructor = "auth.checkPassword#a63011e";
+    private final String _constructor = "auth.checkPassword#d18b4d16";
 
     public TLRequestAuthCheckPassword() {
     }
 
-    public TLRequestAuthCheckPassword(TLBytes passwordHash) {
-        this.passwordHash = passwordHash;
+    public TLRequestAuthCheckPassword(TLAbsInputCheckPasswordSRP password) {
+        this.password = password;
     }
 
     @Override
@@ -52,19 +51,19 @@ public class TLRequestAuthCheckPassword extends TLMethod<TLAuthorization> {
 
     @Override
     public void serializeBody(OutputStream stream) throws IOException {
-        writeTLBytes(passwordHash, stream);
+        writeTLObject(password, stream);
     }
 
     @Override
     @SuppressWarnings({"unchecked", "SimplifiableConditionalExpression"})
     public void deserializeBody(InputStream stream, TLContext context) throws IOException {
-        passwordHash = readTLBytes(stream, context);
+        password = readTLObject(stream, context, TLAbsInputCheckPasswordSRP.class, -1);
     }
 
     @Override
     public int computeSerializedSize() {
         int size = SIZE_CONSTRUCTOR_ID;
-        size += computeTLBytesSerializedSize(passwordHash);
+        size += password.computeSerializedSize();
         return size;
     }
 
@@ -78,11 +77,11 @@ public class TLRequestAuthCheckPassword extends TLMethod<TLAuthorization> {
         return CONSTRUCTOR_ID;
     }
 
-    public TLBytes getPasswordHash() {
-        return passwordHash;
+    public TLAbsInputCheckPasswordSRP getPassword() {
+        return password;
     }
 
-    public void setPasswordHash(TLBytes passwordHash) {
-        this.passwordHash = passwordHash;
+    public void setPassword(TLAbsInputCheckPasswordSRP password) {
+        this.password = password;
     }
 }

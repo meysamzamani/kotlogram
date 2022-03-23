@@ -20,39 +20,39 @@ import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_INT64;
  */
 public class TLInputUser extends TLAbsInputUser {
 
-    public static final int CONSTRUCTOR_ID = 0xd8292816;
+    public static final int CONSTRUCTOR_ID = 0xf21158c6;
 
-    protected int userId;
+    protected long userId;
 
     protected long accessHash;
 
-    private final String _constructor = "inputUser#d8292816";
+    private final String _constructor = "inputUser#f21158c6";
 
     public TLInputUser() {
     }
 
-    public TLInputUser(int userId, long accessHash) {
+    public TLInputUser(long userId, long accessHash) {
         this.userId = userId;
         this.accessHash = accessHash;
     }
 
     @Override
     public void serializeBody(OutputStream stream) throws IOException {
-        writeInt(userId, stream);
+        writeLong(userId, stream);
         writeLong(accessHash, stream);
     }
 
     @Override
     @SuppressWarnings({"unchecked", "SimplifiableConditionalExpression"})
     public void deserializeBody(InputStream stream, TLContext context) throws IOException {
-        userId = readInt(stream);
+        userId = readLong(stream);
         accessHash = readLong(stream);
     }
 
     @Override
     public int computeSerializedSize() {
         int size = SIZE_CONSTRUCTOR_ID;
-        size += SIZE_INT32;
+        size += SIZE_INT64;
         size += SIZE_INT64;
         return size;
     }
@@ -67,11 +67,11 @@ public class TLInputUser extends TLAbsInputUser {
         return CONSTRUCTOR_ID;
     }
 
-    public int getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 

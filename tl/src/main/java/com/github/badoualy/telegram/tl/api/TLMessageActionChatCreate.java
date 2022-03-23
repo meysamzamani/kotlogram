@@ -2,15 +2,13 @@ package com.github.badoualy.telegram.tl.api;
 
 import com.github.badoualy.telegram.tl.TLContext;
 import com.github.badoualy.telegram.tl.core.TLIntVector;
+import com.github.badoualy.telegram.tl.core.TLLongVector;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static com.github.badoualy.telegram.tl.StreamUtils.readTLIntVector;
-import static com.github.badoualy.telegram.tl.StreamUtils.readTLString;
-import static com.github.badoualy.telegram.tl.StreamUtils.writeString;
-import static com.github.badoualy.telegram.tl.StreamUtils.writeTLVector;
+import static com.github.badoualy.telegram.tl.StreamUtils.*;
 import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_CONSTRUCTOR_ID;
 import static com.github.badoualy.telegram.tl.TLObjectUtils.computeTLStringSerializedSize;
 
@@ -20,18 +18,18 @@ import static com.github.badoualy.telegram.tl.TLObjectUtils.computeTLStringSeria
  */
 public class TLMessageActionChatCreate extends TLAbsMessageAction {
 
-    public static final int CONSTRUCTOR_ID = 0xa6638b9a;
+    public static final int CONSTRUCTOR_ID = 0xbd47cbad;
 
     protected String title;
 
-    protected TLIntVector users;
+    protected TLLongVector users;
 
-    private final String _constructor = "messageActionChatCreate#a6638b9a";
+    private final String _constructor = "messageActionChatCreate#bd47cbad";
 
     public TLMessageActionChatCreate() {
     }
 
-    public TLMessageActionChatCreate(String title, TLIntVector users) {
+    public TLMessageActionChatCreate(String title, TLLongVector users) {
         this.title = title;
         this.users = users;
     }
@@ -46,7 +44,7 @@ public class TLMessageActionChatCreate extends TLAbsMessageAction {
     @SuppressWarnings({"unchecked", "SimplifiableConditionalExpression"})
     public void deserializeBody(InputStream stream, TLContext context) throws IOException {
         title = readTLString(stream);
-        users = readTLIntVector(stream, context);
+        users = readTLLongVector(stream, context);
     }
 
     @Override
@@ -75,11 +73,11 @@ public class TLMessageActionChatCreate extends TLAbsMessageAction {
         this.title = title;
     }
 
-    public TLIntVector getUsers() {
+    public TLLongVector getUsers() {
         return users;
     }
 
-    public void setUsers(TLIntVector users) {
+    public void setUsers(TLLongVector users) {
         this.users = users;
     }
 }

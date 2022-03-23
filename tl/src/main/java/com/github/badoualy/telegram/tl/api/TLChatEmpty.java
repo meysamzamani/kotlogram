@@ -6,10 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static com.github.badoualy.telegram.tl.StreamUtils.readInt;
-import static com.github.badoualy.telegram.tl.StreamUtils.writeInt;
-import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_CONSTRUCTOR_ID;
-import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_INT32;
+import static com.github.badoualy.telegram.tl.StreamUtils.*;
+import static com.github.badoualy.telegram.tl.TLObjectUtils.*;
 
 /**
  * @author Yannick Badoual yann.badoual@gmail.com
@@ -17,32 +15,32 @@ import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_INT32;
  */
 public class TLChatEmpty extends TLAbsChat {
 
-    public static final int CONSTRUCTOR_ID = 0x9ba2d800;
+    public static final int CONSTRUCTOR_ID = 0x29562865;
 
-    private final String _constructor = "chatEmpty#9ba2d800";
+    private final String _constructor = "chatEmpty#29562865";
 
     public TLChatEmpty() {
     }
 
-    public TLChatEmpty(int id) {
+    public TLChatEmpty(long id) {
         this.id = id;
     }
 
     @Override
     public void serializeBody(OutputStream stream) throws IOException {
-        writeInt(id, stream);
+        writeLong(id, stream);
     }
 
     @Override
     @SuppressWarnings({"unchecked", "SimplifiableConditionalExpression"})
     public void deserializeBody(InputStream stream, TLContext context) throws IOException {
-        id = readInt(stream);
+        id = readLong(stream);
     }
 
     @Override
     public int computeSerializedSize() {
         int size = SIZE_CONSTRUCTOR_ID;
-        size += SIZE_INT32;
+        size += SIZE_INT64;
         return size;
     }
 
@@ -56,11 +54,11 @@ public class TLChatEmpty extends TLAbsChat {
         return CONSTRUCTOR_ID;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 }

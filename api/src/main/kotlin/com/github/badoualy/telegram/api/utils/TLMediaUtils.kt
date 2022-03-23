@@ -40,14 +40,15 @@ fun TLAbsMessageMedia.getAbsMediaThumbnailInput() = when (this) {
 fun TLMessageMediaDocument.getMediaInput() = when (document) {
     is TLDocument -> {
         val document = document as TLDocument
-        val inputFileLocation = InputFileLocation(TLInputDocumentFileLocation(document.id, document.accessHash, document.version), document.dcId)
+        //TODO: fix TLInputDocumentFileLocation if method will be required
+        val inputFileLocation = InputFileLocation(TLInputDocumentFileLocation(document.id, document.accessHash, 0), document.dcId)
         MediaInput(inputFileLocation, document.size, document.mimeType)
     }
     else -> null
 }
 
 fun TLMessageMediaDocument.getMediaThumbnailInput() = when (document) {
-    is TLDocument -> (document as TLDocument).thumb.getMediaInput()
+    is TLDocument -> (document as TLDocument).thumbs.get(0).getMediaInput()
     else -> null
 }
 
@@ -81,32 +82,19 @@ fun TLMessageMediaWebPage.getMediaThumbnailInput() = when (webpage) {
     else -> null
 }
 
-fun TLAbsPhotoSize?.getMediaInput() = when (this) {
-    is TLPhotoSize -> {
-        val inputFileLocation = location.toInputFileLocation()
-        if (inputFileLocation != null)
-            MediaInput(inputFileLocation, size, "image/jpeg")
-        else null
-    }
-    is TLPhotoCachedSize -> {
-        val inputFileLocation = location.toInputFileLocation()
-        if (inputFileLocation != null)
-            MediaInput(inputFileLocation, bytes.length, "image/jpeg", bytes)
-        else null
-    }
-    else -> null
-}
+//TODO: fix getting file location by file id
+fun TLAbsPhotoSize?.getMediaInput() = null
 
 fun Collection<TLAbsPhotoSize>?.getMaxSize(): TLAbsPhotoSize? {
     if (this == null || isEmpty())
         return null
 
-    val maxSize = filterIsInstance<TLPhotoSize>().sortedByDescending { it.w * it.h }.firstOrNull()
+    val maxSize = this?.filterIsInstance<TLPhotoSize>().sortedByDescending { it.w * it.h }.firstOrNull()
     if (maxSize != null)
         return maxSize
 
     // No TLPhotoSize, look for cached size
-    return filterIsInstance<TLPhotoCachedSize>().firstOrNull()
+    return this?.filterIsInstance<TLPhotoCachedSize>().firstOrNull()
 }
 
 fun Collection<TLAbsPhotoSize>?.getMinSize(): TLAbsPhotoSize? {
@@ -114,11 +102,11 @@ fun Collection<TLAbsPhotoSize>?.getMinSize(): TLAbsPhotoSize? {
         return null
 
     // Look for cached size
-    val minSize = filterIsInstance<TLPhotoCachedSize>().firstOrNull()
+    val minSize = this?.filterIsInstance<TLPhotoCachedSize>().firstOrNull()
     if (minSize != null)
         return minSize
 
-    return filterIsInstance<TLPhotoSize>().sortedBy { it.w * it.h }.firstOrNull()
+    return this?.filterIsInstance<TLPhotoSize>().sortedBy { it.w * it.h }.firstOrNull()
 }
 
 fun TLAbsFileLocation.toInputFileLocation() = when (this) {

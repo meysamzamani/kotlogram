@@ -7,13 +7,13 @@ import com.github.badoualy.telegram.tl.core.TLObject;
  * <ul>
  * <li>{@link TLMessageActionChannelCreate}: messageActionChannelCreate#95d2ac92</li>
  * <li>{@link TLMessageActionChannelMigrateFrom}: messageActionChannelMigrateFrom#b055eaee</li>
- * <li>{@link TLMessageActionChatAddUser}: messageActionChatAddUser#488a7337</li>
- * <li>{@link TLMessageActionChatCreate}: messageActionChatCreate#a6638b9a</li>
+ * <li>{@link TLMessageActionChatAddUser}: messageActionChatAddUser#15cefd00</li>
+ * <li>{@link TLMessageActionChatCreate}: messageActionChatCreate#bd47cbad</li>
  * <li>{@link TLMessageActionChatDeletePhoto}: messageActionChatDeletePhoto#95e3fbef</li>
- * <li>{@link TLMessageActionChatDeleteUser}: messageActionChatDeleteUser#b2ae9b0c</li>
+ * <li>{@link TLMessageActionChatDeleteUser}: messageActionChatDeleteUser#a43f30cc</li>
  * <li>{@link TLMessageActionChatEditPhoto}: messageActionChatEditPhoto#7fcb13a8</li>
  * <li>{@link TLMessageActionChatEditTitle}: messageActionChatEditTitle#b5a1ce5a</li>
- * <li>{@link TLMessageActionChatJoinedByLink}: messageActionChatJoinedByLink#f89cf5e8</li>
+ * <li>{@link TLMessageActionChatJoinedByLink}: messageActionChatJoinedByLink#31224c3</li>
  * <li>{@link TLMessageActionChatMigrateTo}: messageActionChatMigrateTo#51bdb021</li>
  * <li>{@link TLMessageActionEmpty}: messageActionEmpty#b6aef7b0</li>
  * <li>{@link TLMessageActionGameScore}: messageActionGameScore#92a72876</li>

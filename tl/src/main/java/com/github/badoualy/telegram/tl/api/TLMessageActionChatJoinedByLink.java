@@ -6,10 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static com.github.badoualy.telegram.tl.StreamUtils.readInt;
-import static com.github.badoualy.telegram.tl.StreamUtils.writeInt;
-import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_CONSTRUCTOR_ID;
-import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_INT32;
+import static com.github.badoualy.telegram.tl.StreamUtils.*;
+import static com.github.badoualy.telegram.tl.TLObjectUtils.*;
 
 /**
  * @author Yannick Badoual yann.badoual@gmail.com
@@ -17,34 +15,34 @@ import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_INT32;
  */
 public class TLMessageActionChatJoinedByLink extends TLAbsMessageAction {
 
-    public static final int CONSTRUCTOR_ID = 0xf89cf5e8;
+    public static final int CONSTRUCTOR_ID = 0x31224c3;
 
-    protected int inviterId;
+    protected long inviterId;
 
-    private final String _constructor = "messageActionChatJoinedByLink#f89cf5e8";
+    private final String _constructor = "messageActionChatJoinedByLink#31224c3";
 
     public TLMessageActionChatJoinedByLink() {
     }
 
-    public TLMessageActionChatJoinedByLink(int inviterId) {
+    public TLMessageActionChatJoinedByLink(long inviterId) {
         this.inviterId = inviterId;
     }
 
     @Override
     public void serializeBody(OutputStream stream) throws IOException {
-        writeInt(inviterId, stream);
+        writeLong(inviterId, stream);
     }
 
     @Override
     @SuppressWarnings({"unchecked", "SimplifiableConditionalExpression"})
     public void deserializeBody(InputStream stream, TLContext context) throws IOException {
-        inviterId = readInt(stream);
+        inviterId = readLong(stream);
     }
 
     @Override
     public int computeSerializedSize() {
         int size = SIZE_CONSTRUCTOR_ID;
-        size += SIZE_INT32;
+        size += SIZE_INT64;
         return size;
     }
 
@@ -58,11 +56,11 @@ public class TLMessageActionChatJoinedByLink extends TLAbsMessageAction {
         return CONSTRUCTOR_ID;
     }
 
-    public int getInviterId() {
+    public long getInviterId() {
         return inviterId;
     }
 
-    public void setInviterId(int inviterId) {
+    public void setInviterId(long inviterId) {
         this.inviterId = inviterId;
     }
 }

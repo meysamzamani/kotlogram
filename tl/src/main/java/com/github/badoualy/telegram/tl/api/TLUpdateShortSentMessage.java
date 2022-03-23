@@ -22,7 +22,7 @@ import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_INT32;
  */
 public class TLUpdateShortSentMessage extends TLAbsUpdates {
 
-    public static final int CONSTRUCTOR_ID = 0x11f1331c;
+    public static final int CONSTRUCTOR_ID = 0x9015e101;
 
     protected int flags;
 
@@ -40,12 +40,16 @@ public class TLUpdateShortSentMessage extends TLAbsUpdates {
 
     protected TLVector<TLAbsMessageEntity> entities;
 
-    private final String _constructor = "updateShortSentMessage#11f1331c";
+    protected Integer ttlPeriod;
+
+    private final String _constructor = "updateShortSentMessage#9015e101";
 
     public TLUpdateShortSentMessage() {
     }
 
-    public TLUpdateShortSentMessage(boolean out, int id, int pts, int ptsCount, int date, TLAbsMessageMedia media, TLVector<TLAbsMessageEntity> entities) {
+    public TLUpdateShortSentMessage(boolean out, int id, int pts, int ptsCount, int date,
+                                    TLAbsMessageMedia media, TLVector<TLAbsMessageEntity> entities,
+                                    Integer ttlPeriod) {
         this.out = out;
         this.id = id;
         this.pts = pts;
@@ -53,6 +57,7 @@ public class TLUpdateShortSentMessage extends TLAbsUpdates {
         this.date = date;
         this.media = media;
         this.entities = entities;
+        this.ttlPeriod = ttlPeriod;
     }
 
     private void computeFlags() {
@@ -60,12 +65,12 @@ public class TLUpdateShortSentMessage extends TLAbsUpdates {
         flags = out ? (flags | 2) : (flags & ~2);
         flags = media != null ? (flags | 512) : (flags & ~512);
         flags = entities != null ? (flags | 128) : (flags & ~128);
+        flags = ttlPeriod != null ? (flags | 33554432) : (flags & ~33554432);
     }
 
     @Override
     public void serializeBody(OutputStream stream) throws IOException {
         computeFlags();
-
         writeInt(flags, stream);
         writeInt(id, stream);
         writeInt(pts, stream);
@@ -78,6 +83,10 @@ public class TLUpdateShortSentMessage extends TLAbsUpdates {
         if ((flags & 128) != 0) {
             if (entities == null) throwNullFieldException("entities", flags);
             writeTLVector(entities, stream);
+        }
+        if ((flags & 33554432) != 0) {
+            if (ttlPeriod == null) throwNullFieldException("ttlPeriod", flags);
+            writeInt(ttlPeriod, stream);
         }
     }
 
@@ -92,12 +101,12 @@ public class TLUpdateShortSentMessage extends TLAbsUpdates {
         date = readInt(stream);
         media = (flags & 512) != 0 ? readTLObject(stream, context, TLAbsMessageMedia.class, -1) : null;
         entities = (flags & 128) != 0 ? readTLVector(stream, context) : null;
+        ttlPeriod = (flags & 33554432) != 0 ? readInt(stream) : null;
     }
 
     @Override
     public int computeSerializedSize() {
         computeFlags();
-
         int size = SIZE_CONSTRUCTOR_ID;
         size += SIZE_INT32;
         size += SIZE_INT32;
@@ -111,6 +120,10 @@ public class TLUpdateShortSentMessage extends TLAbsUpdates {
         if ((flags & 128) != 0) {
             if (entities == null) throwNullFieldException("entities", flags);
             size += entities.computeSerializedSize();
+        }
+        if ((flags & 33554432) != 0) {
+            if (ttlPeriod == null) throwNullFieldException("ttlPeriod", flags);
+            size += SIZE_INT32;
         }
         return size;
     }

@@ -9,7 +9,7 @@ val TLAbsMessage?.date: Int
         else -> 0
     }
 
-val TLAbsMessage?.fromId: Int?
+val TLAbsMessage?.fromId: TLAbsPeer?
     get() = when (this) {
         is TLMessage -> fromId
         is TLMessageService -> fromId

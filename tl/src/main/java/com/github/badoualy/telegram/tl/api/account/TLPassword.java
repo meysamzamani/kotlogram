@@ -7,16 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static com.github.badoualy.telegram.tl.StreamUtils.readTLBool;
-import static com.github.badoualy.telegram.tl.StreamUtils.readTLBytes;
-import static com.github.badoualy.telegram.tl.StreamUtils.readTLString;
-import static com.github.badoualy.telegram.tl.StreamUtils.writeBoolean;
-import static com.github.badoualy.telegram.tl.StreamUtils.writeString;
-import static com.github.badoualy.telegram.tl.StreamUtils.writeTLBytes;
-import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_BOOLEAN;
-import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_CONSTRUCTOR_ID;
-import static com.github.badoualy.telegram.tl.TLObjectUtils.computeTLBytesSerializedSize;
-import static com.github.badoualy.telegram.tl.TLObjectUtils.computeTLStringSerializedSize;
+import static com.github.badoualy.telegram.tl.StreamUtils.*;
+import static com.github.badoualy.telegram.tl.TLObjectUtils.*;
 
 /**
  * @author Yannick Badoual yann.badoual@gmail.com
@@ -24,54 +16,131 @@ import static com.github.badoualy.telegram.tl.TLObjectUtils.computeTLStringSeria
  */
 public class TLPassword extends TLAbsPassword {
 
-    public static final int CONSTRUCTOR_ID = 0x7c18141c;
+    public static final int CONSTRUCTOR_ID = 0x185b184f;
 
-    protected TLBytes currentSalt;
-
-    protected String hint;
-
+    protected int flags;
     protected boolean hasRecovery;
+    protected boolean hasSecureValues;
+    protected boolean hasPassword;
+    protected TLAbsPasswordKdfAlgo currentAlgo;
+    protected TLBytes srpB;
+    protected Long srpId;
+    protected String hint;
+    protected TLAbsPasswordKdfAlgo newAlgo;
+    protected TLAbsSecurePasswordKdfAlgo newSecureAlgo;
+    protected TLBytes secureRandom;
+    protected Integer pendingResetDate;
 
-    private final String _constructor = "account.password#7c18141c";
+    private final String _constructor = "account.password#185b184f";
 
     public TLPassword() {
     }
 
-    public TLPassword(TLBytes currentSalt, TLBytes newSalt, String hint, boolean hasRecovery, String emailUnconfirmedPattern) {
-        this.currentSalt = currentSalt;
-        this.newSalt = newSalt;
-        this.hint = hint;
+    public TLPassword(boolean hasRecovery, boolean hasSecureValues, boolean hasPassword,
+                      TLAbsPasswordKdfAlgo currentAlgo, TLBytes srpB, long srpId,
+                      String hint, TLAbsPasswordKdfAlgo newAlgo, TLAbsSecurePasswordKdfAlgo newSecureAlgo,
+                      TLBytes secureRandom, int pendingResetDate) {
         this.hasRecovery = hasRecovery;
-        this.emailUnconfirmedPattern = emailUnconfirmedPattern;
+        this.hasSecureValues = hasSecureValues;
+        this.hasPassword = hasPassword;
+        this.currentAlgo = currentAlgo;
+        this.srpB = srpB;
+        this.srpId = srpId;
+        this.hint = hint;
+        this.newAlgo = newAlgo;
+        this.newSecureAlgo = newSecureAlgo;
+        this.secureRandom = secureRandom;
+        this.pendingResetDate = pendingResetDate;
+    }
+
+    private void computeFlags() {
+        flags = 0;
+        flags = hasRecovery ? (flags | 1) : (flags & ~1);
+        flags = hasSecureValues ? (flags | 2) : (flags & ~2);
+        flags = hasPassword ? (flags | 4) : (flags & ~4);
+        flags = currentAlgo != null ? (flags | 4) : (flags & ~4);
+        flags = srpB != null ? (flags | 4) : (flags & ~4);
+        flags = srpId != null ? (flags | 4) : (flags & ~4);
+        flags = hint != null ? (flags | 8) : (flags & ~8);
+        flags = emailUnconfirmedPattern != null ? (flags | 16) : (flags & ~16);
+        flags = pendingResetDate != null ? (flags | 32) : (flags & ~32);
     }
 
     @Override
     public void serializeBody(OutputStream stream) throws IOException {
-        writeTLBytes(currentSalt, stream);
-        writeTLBytes(newSalt, stream);
-        writeString(hint, stream);
-        writeBoolean(hasRecovery, stream);
-        writeString(emailUnconfirmedPattern, stream);
+        computeFlags();
+        writeInt(flags, stream);
+        if ((flags & 4) != 0) {
+            if (currentAlgo == null) throwNullFieldException("currentAlgo", flags);
+            if (srpB == null) throwNullFieldException("srpB", flags);
+            if (srpId == null) throwNullFieldException("srpId", flags);
+            writeTLObject(currentAlgo, stream);
+            writeTLBytes(srpB, stream);
+            writeLong(srpId, stream);
+        }
+        if ((flags & 8) != 0) {
+            if (hint == null) throwNullFieldException("hint", flags);
+            writeString(hint, stream);
+        }
+        if ((flags & 16) != 0) {
+            if (emailUnconfirmedPattern == null) throwNullFieldException("emailUnconfirmedPattern", flags);
+            writeString(emailUnconfirmedPattern, stream);
+        }
+        writeTLObject(newAlgo, stream);
+        writeTLObject(newSecureAlgo, stream);
+        writeTLBytes(secureRandom, stream);
+        if ((flags & 32) != 0) {
+            if (pendingResetDate == null) throwNullFieldException("pendingResetDate", flags);
+            writeInt(pendingResetDate, stream);
+        }
     }
 
     @Override
     @SuppressWarnings({"unchecked", "SimplifiableConditionalExpression"})
     public void deserializeBody(InputStream stream, TLContext context) throws IOException {
-        currentSalt = readTLBytes(stream, context);
-        newSalt = readTLBytes(stream, context);
-        hint = readTLString(stream);
-        hasRecovery = readTLBool(stream);
-        emailUnconfirmedPattern = readTLString(stream);
+        flags = readInt(stream);
+        hasRecovery = (flags & 1) != 0;
+        hasSecureValues = (flags & 2) != 0;
+        hasPassword = (flags & 4) != 0;
+        currentAlgo = (flags & 4) != 0 ? readTLObject(stream, context, TLAbsPasswordKdfAlgo.class, -1) : null;
+        srpB = (flags & 4) != 0 ? readTLBytes(stream, context) : null;
+        srpId = (flags & 4) != 0 ? readLong(stream) : null;
+        hint = (flags & 8) != 0 ? readTLString(stream) : null;
+        emailUnconfirmedPattern = (flags & 16) != 0 ? readTLString(stream) : null;
+        newAlgo = readTLObject(stream, context, TLAbsPasswordKdfAlgo.class, -1);
+        newSecureAlgo = readTLObject(stream, context, TLAbsSecurePasswordKdfAlgo.class, -1);
+        secureRandom = readTLBytes(stream, context);
+        pendingResetDate = (flags & 32) != 0 ? readInt(stream) : null;
     }
 
     @Override
     public int computeSerializedSize() {
+        computeFlags();
         int size = SIZE_CONSTRUCTOR_ID;
-        size += computeTLBytesSerializedSize(currentSalt);
-        size += computeTLBytesSerializedSize(newSalt);
-        size += computeTLStringSerializedSize(hint);
-        size += SIZE_BOOLEAN;
-        size += computeTLStringSerializedSize(emailUnconfirmedPattern);
+        size += SIZE_INT32;
+        if ((flags & 4) != 0) {
+            if (currentAlgo == null) throwNullFieldException("currentAlgo", flags);
+            if (srpB == null) throwNullFieldException("srpB", flags);
+            if (srpId == null) throwNullFieldException("srpId", flags);
+            size += currentAlgo.computeSerializedSize();
+            size += computeTLBytesSerializedSize(srpB);
+            size += SIZE_INT64;
+        }
+        if ((flags & 8) != 0) {
+            if (hint == null) throwNullFieldException("hint", flags);
+            computeTLStringSerializedSize(hint);
+        }
+        if ((flags & 16) != 0) {
+            if (emailUnconfirmedPattern == null) throwNullFieldException("emailUnconfirmedPattern", flags);
+            computeTLStringSerializedSize(emailUnconfirmedPattern);
+        }
+        size += newAlgo.computeSerializedSize();
+        size += newSecureAlgo.computeSerializedSize();
+        size += computeTLBytesSerializedSize(secureRandom);
+        if ((flags & 32) != 0) {
+            if (pendingResetDate == null) throwNullFieldException("pendingResetDate", flags);
+            size += SIZE_INT32;
+        }
         return size;
     }
 
@@ -85,20 +154,52 @@ public class TLPassword extends TLAbsPassword {
         return CONSTRUCTOR_ID;
     }
 
-    public TLBytes getCurrentSalt() {
-        return currentSalt;
+    public boolean isHasRecovery() {
+        return hasRecovery;
     }
 
-    public void setCurrentSalt(TLBytes currentSalt) {
-        this.currentSalt = currentSalt;
+    public void setHasRecovery(boolean hasRecovery) {
+        this.hasRecovery = hasRecovery;
     }
 
-    public TLBytes getNewSalt() {
-        return newSalt;
+    public boolean isHasSecureValues() {
+        return hasSecureValues;
     }
 
-    public void setNewSalt(TLBytes newSalt) {
-        this.newSalt = newSalt;
+    public void setHasSecureValues(boolean hasSecureValues) {
+        this.hasSecureValues = hasSecureValues;
+    }
+
+    public boolean isHasPassword() {
+        return hasPassword;
+    }
+
+    public void setHasPassword(boolean hasPassword) {
+        this.hasPassword = hasPassword;
+    }
+
+    public TLAbsPasswordKdfAlgo getCurrentAlgo() {
+        return currentAlgo;
+    }
+
+    public void setCurrentAlgo(TLAbsPasswordKdfAlgo currentAlgo) {
+        this.currentAlgo = currentAlgo;
+    }
+
+    public TLBytes getSrpB() {
+        return srpB;
+    }
+
+    public void setSrpB(TLBytes srpB) {
+        this.srpB = srpB;
+    }
+
+    public Long getSrpId() {
+        return srpId;
+    }
+
+    public void setSrpId(Long srpId) {
+        this.srpId = srpId;
     }
 
     public String getHint() {
@@ -109,19 +210,35 @@ public class TLPassword extends TLAbsPassword {
         this.hint = hint;
     }
 
-    public boolean getHasRecovery() {
-        return hasRecovery;
+    public TLAbsPasswordKdfAlgo getNewAlgo() {
+        return newAlgo;
     }
 
-    public void setHasRecovery(boolean hasRecovery) {
-        this.hasRecovery = hasRecovery;
+    public void setNewAlgo(TLAbsPasswordKdfAlgo newAlgo) {
+        this.newAlgo = newAlgo;
     }
 
-    public String getEmailUnconfirmedPattern() {
-        return emailUnconfirmedPattern;
+    public TLAbsSecurePasswordKdfAlgo getNewSecureAlgo() {
+        return newSecureAlgo;
     }
 
-    public void setEmailUnconfirmedPattern(String emailUnconfirmedPattern) {
-        this.emailUnconfirmedPattern = emailUnconfirmedPattern;
+    public void setNewSecureAlgo(TLAbsSecurePasswordKdfAlgo newSecureAlgo) {
+        this.newSecureAlgo = newSecureAlgo;
+    }
+
+    public TLBytes getSecureRandom() {
+        return secureRandom;
+    }
+
+    public void setSecureRandom(TLBytes secureRandom) {
+        this.secureRandom = secureRandom;
+    }
+
+    public Integer getPendingResetDate() {
+        return pendingResetDate;
+    }
+
+    public void setPendingResetDate(Integer pendingResetDate) {
+        this.pendingResetDate = pendingResetDate;
     }
 }

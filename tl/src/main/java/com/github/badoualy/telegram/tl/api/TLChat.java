@@ -6,15 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static com.github.badoualy.telegram.tl.StreamUtils.readInt;
-import static com.github.badoualy.telegram.tl.StreamUtils.readTLObject;
-import static com.github.badoualy.telegram.tl.StreamUtils.readTLString;
-import static com.github.badoualy.telegram.tl.StreamUtils.writeInt;
-import static com.github.badoualy.telegram.tl.StreamUtils.writeString;
-import static com.github.badoualy.telegram.tl.StreamUtils.writeTLObject;
-import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_CONSTRUCTOR_ID;
-import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_INT32;
-import static com.github.badoualy.telegram.tl.TLObjectUtils.computeTLStringSerializedSize;
+import static com.github.badoualy.telegram.tl.StreamUtils.*;
+import static com.github.badoualy.telegram.tl.TLObjectUtils.*;
 
 /**
  * @author Yannick Badoual yann.badoual@gmail.com
@@ -22,7 +15,7 @@ import static com.github.badoualy.telegram.tl.TLObjectUtils.computeTLStringSeria
  */
 public class TLChat extends TLAbsChat {
 
-    public static final int CONSTRUCTOR_ID = 0xd91cdd54;
+    public static final int CONSTRUCTOR_ID = 0x41cbf256;
 
     protected int flags;
 
@@ -32,11 +25,11 @@ public class TLChat extends TLAbsChat {
 
     protected boolean left;
 
-    protected boolean adminsEnabled;
-
-    protected boolean admin;
-
     protected boolean deactivated;
+
+    protected boolean callActive;
+
+    protected boolean callNotEmpty;
 
     protected String title;
 
@@ -50,25 +43,34 @@ public class TLChat extends TLAbsChat {
 
     protected TLAbsInputChannel migratedTo;
 
-    private final String _constructor = "chat#d91cdd54";
+    protected TLChatAdminRights adminRights;
+
+    protected TLChatBannedRights defaultBannedRights;
+
+    private final String _constructor = "chat#41cbf256";
 
     public TLChat() {
     }
 
-    public TLChat(boolean creator, boolean kicked, boolean left, boolean adminsEnabled, boolean admin, boolean deactivated, int id, String title, TLAbsChatPhoto photo, int participantsCount, int date, int version, TLAbsInputChannel migratedTo) {
+    public TLChat(boolean creator, boolean kicked, boolean left,
+                  boolean deactivated, boolean callActive, boolean callNotEmpty,
+                  String title, TLAbsChatPhoto photo, int participantsCount,
+                  int date, int version, TLAbsInputChannel migratedTo,
+                  TLChatAdminRights adminRights, TLChatBannedRights defaultBannedRights) {
         this.creator = creator;
         this.kicked = kicked;
         this.left = left;
-        this.adminsEnabled = adminsEnabled;
-        this.admin = admin;
         this.deactivated = deactivated;
-        this.id = id;
+        this.callActive = callActive;
+        this.callNotEmpty = callNotEmpty;
         this.title = title;
         this.photo = photo;
         this.participantsCount = participantsCount;
         this.date = date;
         this.version = version;
         this.migratedTo = migratedTo;
+        this.adminRights = adminRights;
+        this.defaultBannedRights = defaultBannedRights;
     }
 
     private void computeFlags() {
@@ -76,18 +78,19 @@ public class TLChat extends TLAbsChat {
         flags = creator ? (flags | 1) : (flags & ~1);
         flags = kicked ? (flags | 2) : (flags & ~2);
         flags = left ? (flags | 4) : (flags & ~4);
-        flags = adminsEnabled ? (flags | 8) : (flags & ~8);
-        flags = admin ? (flags | 16) : (flags & ~16);
         flags = deactivated ? (flags | 32) : (flags & ~32);
+        flags = callActive ? (flags | 8388608) : (flags & ~8388608);
+        flags = callNotEmpty ? (flags | 16777216) : (flags & ~16777216);
         flags = migratedTo != null ? (flags | 64) : (flags & ~64);
+        flags = adminRights != null ? (flags | 16384) : (flags & ~16384);
+        flags = defaultBannedRights != null ? (flags | 262144) : (flags & ~262144);
     }
 
     @Override
     public void serializeBody(OutputStream stream) throws IOException {
         computeFlags();
-
         writeInt(flags, stream);
-        writeInt(id, stream);
+        writeLong(id, stream);
         writeString(title, stream);
         writeTLObject(photo, stream);
         writeInt(participantsCount, stream);
@@ -96,6 +99,14 @@ public class TLChat extends TLAbsChat {
         if ((flags & 64) != 0) {
             if (migratedTo == null) throwNullFieldException("migratedTo", flags);
             writeTLObject(migratedTo, stream);
+        }
+        if ((flags & 16384) != 0) {
+            if (adminRights == null) throwNullFieldException("adminRights", flags);
+            writeTLObject(adminRights, stream);
+        }
+        if ((flags & 262144) != 0) {
+            if (defaultBannedRights == null) throwNullFieldException("defaultBannedRights", flags);
+            writeTLObject(defaultBannedRights, stream);
         }
     }
 
@@ -106,33 +117,44 @@ public class TLChat extends TLAbsChat {
         creator = (flags & 1) != 0;
         kicked = (flags & 2) != 0;
         left = (flags & 4) != 0;
-        adminsEnabled = (flags & 8) != 0;
-        admin = (flags & 16) != 0;
         deactivated = (flags & 32) != 0;
-        id = readInt(stream);
+        callActive = (flags & 8388608) != 0;
+        callNotEmpty = (flags & 16777216) != 0;
+        id = readLong(stream);
         title = readTLString(stream);
         photo = readTLObject(stream, context, TLAbsChatPhoto.class, -1);
         participantsCount = readInt(stream);
         date = readInt(stream);
         version = readInt(stream);
         migratedTo = (flags & 64) != 0 ? readTLObject(stream, context, TLAbsInputChannel.class, -1) : null;
+        adminRights = (flags & 16384) != 0 ? readTLObject(stream, context, TLChatAdminRights.class, -1) : null;
+        defaultBannedRights = (flags & 262144) != 0 ? readTLObject(stream, context, TLChatBannedRights.class, -1) : null;
     }
 
     @Override
     public int computeSerializedSize() {
         computeFlags();
-
         int size = SIZE_CONSTRUCTOR_ID;
         size += SIZE_INT32;
         size += SIZE_INT32;
         size += computeTLStringSerializedSize(title);
         size += photo.computeSerializedSize();
+        size += SIZE_INT64;
         size += SIZE_INT32;
         size += SIZE_INT32;
-        size += SIZE_INT32;
+        size += adminRights.computeSerializedSize();
+        size += defaultBannedRights.computeSerializedSize();
         if ((flags & 64) != 0) {
             if (migratedTo == null) throwNullFieldException("migratedTo", flags);
             size += migratedTo.computeSerializedSize();
+        }
+        if ((flags & 16384) != 0) {
+            if (adminRights == null) throwNullFieldException("adminRights", flags);
+            size += adminRights.computeSerializedSize();
+        }
+        if ((flags & 262144) != 0) {
+            if (defaultBannedRights == null) throwNullFieldException("defaultBannedRights", flags);
+            size += defaultBannedRights.computeSerializedSize();
         }
         return size;
     }
@@ -147,7 +169,7 @@ public class TLChat extends TLAbsChat {
         return CONSTRUCTOR_ID;
     }
 
-    public boolean getCreator() {
+    public boolean isCreator() {
         return creator;
     }
 
@@ -155,7 +177,7 @@ public class TLChat extends TLAbsChat {
         this.creator = creator;
     }
 
-    public boolean getKicked() {
+    public boolean isKicked() {
         return kicked;
     }
 
@@ -163,7 +185,7 @@ public class TLChat extends TLAbsChat {
         this.kicked = kicked;
     }
 
-    public boolean getLeft() {
+    public boolean isLeft() {
         return left;
     }
 
@@ -171,23 +193,7 @@ public class TLChat extends TLAbsChat {
         this.left = left;
     }
 
-    public boolean getAdminsEnabled() {
-        return adminsEnabled;
-    }
-
-    public void setAdminsEnabled(boolean adminsEnabled) {
-        this.adminsEnabled = adminsEnabled;
-    }
-
-    public boolean getAdmin() {
-        return admin;
-    }
-
-    public void setAdmin(boolean admin) {
-        this.admin = admin;
-    }
-
-    public boolean getDeactivated() {
+    public boolean isDeactivated() {
         return deactivated;
     }
 
@@ -195,12 +201,20 @@ public class TLChat extends TLAbsChat {
         this.deactivated = deactivated;
     }
 
-    public int getId() {
-        return id;
+    public boolean isCallActive() {
+        return callActive;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setCallActive(boolean callActive) {
+        this.callActive = callActive;
+    }
+
+    public boolean isCallNotEmpty() {
+        return callNotEmpty;
+    }
+
+    public void setCallNotEmpty(boolean callNotEmpty) {
+        this.callNotEmpty = callNotEmpty;
     }
 
     public String getTitle() {
@@ -249,5 +263,21 @@ public class TLChat extends TLAbsChat {
 
     public void setMigratedTo(TLAbsInputChannel migratedTo) {
         this.migratedTo = migratedTo;
+    }
+
+    public TLChatAdminRights getAdminRights() {
+        return adminRights;
+    }
+
+    public void setAdminRights(TLChatAdminRights adminRights) {
+        this.adminRights = adminRights;
+    }
+
+    public TLChatBannedRights getDefaultBannedRights() {
+        return defaultBannedRights;
+    }
+
+    public void setDefaultBannedRights(TLChatBannedRights defaultBannedRights) {
+        this.defaultBannedRights = defaultBannedRights;
     }
 }

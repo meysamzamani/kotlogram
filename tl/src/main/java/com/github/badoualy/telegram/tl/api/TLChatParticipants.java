@@ -7,12 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static com.github.badoualy.telegram.tl.StreamUtils.readInt;
-import static com.github.badoualy.telegram.tl.StreamUtils.readTLVector;
-import static com.github.badoualy.telegram.tl.StreamUtils.writeInt;
-import static com.github.badoualy.telegram.tl.StreamUtils.writeTLVector;
-import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_CONSTRUCTOR_ID;
-import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_INT32;
+import static com.github.badoualy.telegram.tl.StreamUtils.*;
+import static com.github.badoualy.telegram.tl.TLObjectUtils.*;
 
 /**
  * @author Yannick Badoual yann.badoual@gmail.com
@@ -20,18 +16,18 @@ import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_INT32;
  */
 public class TLChatParticipants extends TLAbsChatParticipants {
 
-    public static final int CONSTRUCTOR_ID = 0x3f460fed;
+    public static final int CONSTRUCTOR_ID = 0x3cbc93f8;
 
     protected TLVector<TLAbsChatParticipant> participants;
 
     protected int version;
 
-    private final String _constructor = "chatParticipants#3f460fed";
+    private final String _constructor = "chatParticipants#3cbc93f8";
 
     public TLChatParticipants() {
     }
 
-    public TLChatParticipants(int chatId, TLVector<TLAbsChatParticipant> participants, int version) {
+    public TLChatParticipants(long chatId, TLVector<TLAbsChatParticipant> participants, int version) {
         this.chatId = chatId;
         this.participants = participants;
         this.version = version;
@@ -39,7 +35,7 @@ public class TLChatParticipants extends TLAbsChatParticipants {
 
     @Override
     public void serializeBody(OutputStream stream) throws IOException {
-        writeInt(chatId, stream);
+        writeLong(chatId, stream);
         writeTLVector(participants, stream);
         writeInt(version, stream);
     }
@@ -47,7 +43,7 @@ public class TLChatParticipants extends TLAbsChatParticipants {
     @Override
     @SuppressWarnings({"unchecked", "SimplifiableConditionalExpression"})
     public void deserializeBody(InputStream stream, TLContext context) throws IOException {
-        chatId = readInt(stream);
+        chatId = readLong(stream);
         participants = readTLVector(stream, context);
         version = readInt(stream);
     }
@@ -55,7 +51,7 @@ public class TLChatParticipants extends TLAbsChatParticipants {
     @Override
     public int computeSerializedSize() {
         int size = SIZE_CONSTRUCTOR_ID;
-        size += SIZE_INT32;
+        size += SIZE_INT64;
         size += participants.computeSerializedSize();
         size += SIZE_INT32;
         return size;
@@ -71,11 +67,11 @@ public class TLChatParticipants extends TLAbsChatParticipants {
         return CONSTRUCTOR_ID;
     }
 
-    public int getChatId() {
+    public long getChatId() {
         return chatId;
     }
 
-    public void setChatId(int chatId) {
+    public void setChatId(long chatId) {
         this.chatId = chatId;
     }
 

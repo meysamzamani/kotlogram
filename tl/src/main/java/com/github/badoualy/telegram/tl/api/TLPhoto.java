@@ -1,21 +1,15 @@
 package com.github.badoualy.telegram.tl.api;
 
 import com.github.badoualy.telegram.tl.TLContext;
+import com.github.badoualy.telegram.tl.core.TLBytes;
 import com.github.badoualy.telegram.tl.core.TLVector;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static com.github.badoualy.telegram.tl.StreamUtils.readInt;
-import static com.github.badoualy.telegram.tl.StreamUtils.readLong;
-import static com.github.badoualy.telegram.tl.StreamUtils.readTLVector;
-import static com.github.badoualy.telegram.tl.StreamUtils.writeInt;
-import static com.github.badoualy.telegram.tl.StreamUtils.writeLong;
-import static com.github.badoualy.telegram.tl.StreamUtils.writeTLVector;
-import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_CONSTRUCTOR_ID;
-import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_INT32;
-import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_INT64;
+import static com.github.badoualy.telegram.tl.StreamUtils.*;
+import static com.github.badoualy.telegram.tl.TLObjectUtils.*;
 
 /**
  * @author Yannick Badoual yann.badoual@gmail.com
@@ -23,45 +17,64 @@ import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_INT64;
  */
 public class TLPhoto extends TLAbsPhoto {
 
-    public static final int CONSTRUCTOR_ID = 0x9288dd29;
+    public static final int CONSTRUCTOR_ID = 0xfb197a65;
 
     protected int flags;
 
     protected boolean hasStickers;
 
+    protected long id;
+
     protected long accessHash;
+
+    protected TLBytes fileReference;
 
     protected int date;
 
     protected TLVector<TLAbsPhotoSize> sizes;
 
-    private final String _constructor = "photo#9288dd29";
+    protected TLVector<TLVideoSize> videoSizes;
+
+    protected int dcId;
+
+    private final String _constructor = "photo#fb197a65";
 
     public TLPhoto() {
     }
 
-    public TLPhoto(boolean hasStickers, long id, long accessHash, int date, TLVector<TLAbsPhotoSize> sizes) {
+    public TLPhoto(boolean hasStickers, long id, long accessHash,
+                   TLBytes fileReference, int date, TLVector<TLAbsPhotoSize> sizes,
+                   TLVector<TLVideoSize> videoSizes, int dcId) {
         this.hasStickers = hasStickers;
         this.id = id;
         this.accessHash = accessHash;
+        this.fileReference = fileReference;
         this.date = date;
         this.sizes = sizes;
+        this.videoSizes = videoSizes;
+        this.dcId = dcId;
     }
 
     private void computeFlags() {
         flags = 0;
         flags = hasStickers ? (flags | 1) : (flags & ~1);
+        flags = videoSizes != null ? (flags | 2) : (flags & ~2);
     }
 
     @Override
     public void serializeBody(OutputStream stream) throws IOException {
         computeFlags();
-
         writeInt(flags, stream);
         writeLong(id, stream);
         writeLong(accessHash, stream);
+        writeTLBytes(fileReference, stream);
         writeInt(date, stream);
         writeTLVector(sizes, stream);
+        if ((flags & 2) != 0) {
+            if (videoSizes == null) throwNullFieldException("videoSizes", flags);
+            writeTLVector(videoSizes, stream);
+        }
+        writeInt(dcId, stream);
     }
 
     @Override
@@ -71,20 +84,28 @@ public class TLPhoto extends TLAbsPhoto {
         hasStickers = (flags & 1) != 0;
         id = readLong(stream);
         accessHash = readLong(stream);
+        fileReference = readTLBytes(stream, context);
         date = readInt(stream);
         sizes = readTLVector(stream, context);
+        videoSizes = (flags & 2) != 0 ? readTLVector(stream, context) : null;
+        dcId = readInt(stream);
     }
 
     @Override
     public int computeSerializedSize() {
         computeFlags();
-
         int size = SIZE_CONSTRUCTOR_ID;
         size += SIZE_INT32;
         size += SIZE_INT64;
         size += SIZE_INT64;
+        size += computeTLBytesSerializedSize(fileReference);
         size += SIZE_INT32;
         size += sizes.computeSerializedSize();
+        if ((flags & 2) != 0) {
+            if (videoSizes == null) throwNullFieldException("videoSizes", flags);
+            size += videoSizes.computeSerializedSize();
+        }
+        size += SIZE_INT32;
         return size;
     }
 
@@ -98,7 +119,22 @@ public class TLPhoto extends TLAbsPhoto {
         return CONSTRUCTOR_ID;
     }
 
-    public boolean getHasStickers() {
+    @Override
+    public final boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public final boolean isNotEmpty() {
+        return true;
+    }
+
+    @Override
+    public final TLPhoto getAsPhoto() {
+        return this;
+    }
+
+    public boolean isHasStickers() {
         return hasStickers;
     }
 
@@ -106,10 +142,12 @@ public class TLPhoto extends TLAbsPhoto {
         this.hasStickers = hasStickers;
     }
 
+    @Override
     public long getId() {
         return id;
     }
 
+    @Override
     public void setId(long id) {
         this.id = id;
     }
@@ -120,6 +158,14 @@ public class TLPhoto extends TLAbsPhoto {
 
     public void setAccessHash(long accessHash) {
         this.accessHash = accessHash;
+    }
+
+    public TLBytes getFileReference() {
+        return fileReference;
+    }
+
+    public void setFileReference(TLBytes fileReference) {
+        this.fileReference = fileReference;
     }
 
     public int getDate() {
@@ -138,18 +184,19 @@ public class TLPhoto extends TLAbsPhoto {
         this.sizes = sizes;
     }
 
-    @Override
-    public final boolean isEmpty() {
-        return false;
+    public TLVector<TLVideoSize> getVideoSizes() {
+        return videoSizes;
     }
 
-    @Override
-    public final boolean isNotEmpty() {
-        return true;
+    public void setVideoSizes(TLVector<TLVideoSize> videoSizes) {
+        this.videoSizes = videoSizes;
     }
 
-    @Override
-    public final TLPhoto getAsPhoto() {
-        return this;
+    public int getDcId() {
+        return dcId;
+    }
+
+    public void setDcId(int dcId) {
+        this.dcId = dcId;
     }
 }

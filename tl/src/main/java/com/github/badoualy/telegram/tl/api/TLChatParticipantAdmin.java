@@ -6,10 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static com.github.badoualy.telegram.tl.StreamUtils.readInt;
-import static com.github.badoualy.telegram.tl.StreamUtils.writeInt;
-import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_CONSTRUCTOR_ID;
-import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_INT32;
+import static com.github.badoualy.telegram.tl.StreamUtils.*;
+import static com.github.badoualy.telegram.tl.TLObjectUtils.*;
 
 /**
  * @author Yannick Badoual yann.badoual@gmail.com
@@ -17,18 +15,18 @@ import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_INT32;
  */
 public class TLChatParticipantAdmin extends TLAbsChatParticipant {
 
-    public static final int CONSTRUCTOR_ID = 0xe2d6e436;
+    public static final int CONSTRUCTOR_ID = 0xa0933f5b;
 
-    protected int inviterId;
+    protected long inviterId;
 
     protected int date;
 
-    private final String _constructor = "chatParticipantAdmin#e2d6e436";
+    private final String _constructor = "chatParticipantAdmin#a0933f5b";
 
     public TLChatParticipantAdmin() {
     }
 
-    public TLChatParticipantAdmin(int userId, int inviterId, int date) {
+    public TLChatParticipantAdmin(long userId, long inviterId, int date) {
         this.userId = userId;
         this.inviterId = inviterId;
         this.date = date;
@@ -36,24 +34,24 @@ public class TLChatParticipantAdmin extends TLAbsChatParticipant {
 
     @Override
     public void serializeBody(OutputStream stream) throws IOException {
-        writeInt(userId, stream);
-        writeInt(inviterId, stream);
+        writeLong(userId, stream);
+        writeLong(inviterId, stream);
         writeInt(date, stream);
     }
 
     @Override
     @SuppressWarnings({"unchecked", "SimplifiableConditionalExpression"})
     public void deserializeBody(InputStream stream, TLContext context) throws IOException {
-        userId = readInt(stream);
-        inviterId = readInt(stream);
+        userId = readLong(stream);
+        inviterId = readLong(stream);
         date = readInt(stream);
     }
 
     @Override
     public int computeSerializedSize() {
         int size = SIZE_CONSTRUCTOR_ID;
-        size += SIZE_INT32;
-        size += SIZE_INT32;
+        size += SIZE_INT64;
+        size += SIZE_INT64;
         size += SIZE_INT32;
         return size;
     }
@@ -68,19 +66,19 @@ public class TLChatParticipantAdmin extends TLAbsChatParticipant {
         return CONSTRUCTOR_ID;
     }
 
-    public int getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 
-    public int getInviterId() {
+    public long getInviterId() {
         return inviterId;
     }
 
-    public void setInviterId(int inviterId) {
+    public void setInviterId(long inviterId) {
         this.inviterId = inviterId;
     }
 

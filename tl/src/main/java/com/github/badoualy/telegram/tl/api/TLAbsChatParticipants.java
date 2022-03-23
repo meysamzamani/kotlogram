@@ -5,7 +5,7 @@ import com.github.badoualy.telegram.tl.core.TLObject;
 /**
  * Abstraction level for the following constructors:
  * <ul>
- * <li>{@link TLChatParticipants}: chatParticipants#3f460fed</li>
+ * <li>{@link TLChatParticipants}: chatParticipants#3cbc93f8</li>
  * <li>{@link TLChatParticipantsForbidden}: chatParticipantsForbidden#fc900c2b</li>
  * </ul>
  *
@@ -14,16 +14,16 @@ import com.github.badoualy.telegram.tl.core.TLObject;
  */
 public abstract class TLAbsChatParticipants extends TLObject {
 
-    protected int chatId;
+    protected long chatId;
 
     public TLAbsChatParticipants() {
     }
 
-    public int getChatId() {
+    public long getChatId() {
         return chatId;
     }
 
-    public void setChatId(int chatId) {
+    public void setChatId(long chatId) {
         this.chatId = chatId;
     }
 }

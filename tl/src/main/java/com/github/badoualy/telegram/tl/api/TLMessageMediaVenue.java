@@ -6,10 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static com.github.badoualy.telegram.tl.StreamUtils.readTLObject;
-import static com.github.badoualy.telegram.tl.StreamUtils.readTLString;
-import static com.github.badoualy.telegram.tl.StreamUtils.writeString;
-import static com.github.badoualy.telegram.tl.StreamUtils.writeTLObject;
+import static com.github.badoualy.telegram.tl.StreamUtils.*;
 import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_CONSTRUCTOR_ID;
 import static com.github.badoualy.telegram.tl.TLObjectUtils.computeTLStringSerializedSize;
 
@@ -19,7 +16,7 @@ import static com.github.badoualy.telegram.tl.TLObjectUtils.computeTLStringSeria
  */
 public class TLMessageMediaVenue extends TLAbsMessageMedia {
 
-    public static final int CONSTRUCTOR_ID = 0x7912b71f;
+    public static final int CONSTRUCTOR_ID = 0x2ec0533f;
 
     protected TLAbsGeoPoint geo;
 
@@ -31,17 +28,20 @@ public class TLMessageMediaVenue extends TLAbsMessageMedia {
 
     protected String venueId;
 
-    private final String _constructor = "messageMediaVenue#7912b71f";
+    protected String venueType;
+
+    private final String _constructor = "messageMediaVenue#2ec0533f";
 
     public TLMessageMediaVenue() {
     }
 
-    public TLMessageMediaVenue(TLAbsGeoPoint geo, String title, String address, String provider, String venueId) {
+    public TLMessageMediaVenue(TLAbsGeoPoint geo, String title, String address, String provider, String venueId, String venueType) {
         this.geo = geo;
         this.title = title;
         this.address = address;
         this.provider = provider;
         this.venueId = venueId;
+        this.venueType = venueType;
     }
 
     @Override
@@ -51,6 +51,7 @@ public class TLMessageMediaVenue extends TLAbsMessageMedia {
         writeString(address, stream);
         writeString(provider, stream);
         writeString(venueId, stream);
+        writeString(venueType, stream);
     }
 
     @Override
@@ -61,6 +62,7 @@ public class TLMessageMediaVenue extends TLAbsMessageMedia {
         address = readTLString(stream);
         provider = readTLString(stream);
         venueId = readTLString(stream);
+        venueType = readTLString(stream);
     }
 
     @Override
@@ -71,6 +73,7 @@ public class TLMessageMediaVenue extends TLAbsMessageMedia {
         size += computeTLStringSerializedSize(address);
         size += computeTLStringSerializedSize(provider);
         size += computeTLStringSerializedSize(venueId);
+        size += computeTLStringSerializedSize(venueType);
         return size;
     }
 
@@ -122,5 +125,13 @@ public class TLMessageMediaVenue extends TLAbsMessageMedia {
 
     public void setVenueId(String venueId) {
         this.venueId = venueId;
+    }
+
+    public String getVenueType() {
+        return venueType;
+    }
+
+    public void setVenueType(String venueType) {
+        this.venueType = venueType;
     }
 }

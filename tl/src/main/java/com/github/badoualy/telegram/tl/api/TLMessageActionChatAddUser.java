@@ -2,13 +2,13 @@ package com.github.badoualy.telegram.tl.api;
 
 import com.github.badoualy.telegram.tl.TLContext;
 import com.github.badoualy.telegram.tl.core.TLIntVector;
+import com.github.badoualy.telegram.tl.core.TLLongVector;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static com.github.badoualy.telegram.tl.StreamUtils.readTLIntVector;
-import static com.github.badoualy.telegram.tl.StreamUtils.writeTLVector;
+import static com.github.badoualy.telegram.tl.StreamUtils.*;
 import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_CONSTRUCTOR_ID;
 
 /**
@@ -17,16 +17,16 @@ import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_CONSTRUCTOR_ID;
  */
 public class TLMessageActionChatAddUser extends TLAbsMessageAction {
 
-    public static final int CONSTRUCTOR_ID = 0x488a7337;
+    public static final int CONSTRUCTOR_ID = 0x15cefd00;
 
-    protected TLIntVector users;
+    protected TLLongVector users;
 
-    private final String _constructor = "messageActionChatAddUser#488a7337";
+    private final String _constructor = "messageActionChatAddUser#15cefd00";
 
     public TLMessageActionChatAddUser() {
     }
 
-    public TLMessageActionChatAddUser(TLIntVector users) {
+    public TLMessageActionChatAddUser(TLLongVector users) {
         this.users = users;
     }
 
@@ -38,7 +38,7 @@ public class TLMessageActionChatAddUser extends TLAbsMessageAction {
     @Override
     @SuppressWarnings({"unchecked", "SimplifiableConditionalExpression"})
     public void deserializeBody(InputStream stream, TLContext context) throws IOException {
-        users = readTLIntVector(stream, context);
+        users = readTLLongVector(stream, context);
     }
 
     @Override
@@ -58,11 +58,11 @@ public class TLMessageActionChatAddUser extends TLAbsMessageAction {
         return CONSTRUCTOR_ID;
     }
 
-    public TLIntVector getUsers() {
+    public TLLongVector getUsers() {
         return users;
     }
 
-    public void setUsers(TLIntVector users) {
+    public void setUsers(TLLongVector users) {
         this.users = users;
     }
 }

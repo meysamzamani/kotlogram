@@ -5,7 +5,7 @@ import com.github.badoualy.telegram.tl.core.TLObject;
 /**
  * Abstraction level for the following constructors:
  * <ul>
- * <li>{@link TLInputChannel}: inputChannel#afeb712e</li>
+ * <li>{@link TLInputChannel}: inputChannel#f35aec28</li>
  * <li>{@link TLInputChannelEmpty}: inputChannelEmpty#ee8c1e86</li>
  * </ul>
  *

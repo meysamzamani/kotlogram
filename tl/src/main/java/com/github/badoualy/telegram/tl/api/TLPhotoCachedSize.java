@@ -26,9 +26,7 @@ import static com.github.badoualy.telegram.tl.TLObjectUtils.computeTLStringSeria
  */
 public class TLPhotoCachedSize extends TLAbsPhotoSize {
 
-    public static final int CONSTRUCTOR_ID = 0xe9a734fa;
-
-    protected TLAbsFileLocation location;
+    public static final int CONSTRUCTOR_ID = 0x21e1ad6;
 
     protected int w;
 
@@ -36,14 +34,13 @@ public class TLPhotoCachedSize extends TLAbsPhotoSize {
 
     protected TLBytes bytes;
 
-    private final String _constructor = "photoCachedSize#e9a734fa";
+    private final String _constructor = "photoCachedSize#21e1ad6";
 
     public TLPhotoCachedSize() {
     }
 
-    public TLPhotoCachedSize(String type, TLAbsFileLocation location, int w, int h, TLBytes bytes) {
+    public TLPhotoCachedSize(String type, int w, int h, TLBytes bytes) {
         this.type = type;
-        this.location = location;
         this.w = w;
         this.h = h;
         this.bytes = bytes;
@@ -52,7 +49,6 @@ public class TLPhotoCachedSize extends TLAbsPhotoSize {
     @Override
     public void serializeBody(OutputStream stream) throws IOException {
         writeString(type, stream);
-        writeTLObject(location, stream);
         writeInt(w, stream);
         writeInt(h, stream);
         writeTLBytes(bytes, stream);
@@ -62,7 +58,6 @@ public class TLPhotoCachedSize extends TLAbsPhotoSize {
     @SuppressWarnings({"unchecked", "SimplifiableConditionalExpression"})
     public void deserializeBody(InputStream stream, TLContext context) throws IOException {
         type = readTLString(stream);
-        location = readTLObject(stream, context, TLAbsFileLocation.class, -1);
         w = readInt(stream);
         h = readInt(stream);
         bytes = readTLBytes(stream, context);
@@ -72,7 +67,6 @@ public class TLPhotoCachedSize extends TLAbsPhotoSize {
     public int computeSerializedSize() {
         int size = SIZE_CONSTRUCTOR_ID;
         size += computeTLStringSerializedSize(type);
-        size += location.computeSerializedSize();
         size += SIZE_INT32;
         size += SIZE_INT32;
         size += computeTLBytesSerializedSize(bytes);
@@ -95,14 +89,6 @@ public class TLPhotoCachedSize extends TLAbsPhotoSize {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public TLAbsFileLocation getLocation() {
-        return location;
-    }
-
-    public void setLocation(TLAbsFileLocation location) {
-        this.location = location;
     }
 
     public int getW() {

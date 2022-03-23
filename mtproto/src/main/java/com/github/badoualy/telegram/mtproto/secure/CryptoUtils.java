@@ -2,12 +2,10 @@ package com.github.badoualy.telegram.mtproto.secure;
 
 import com.github.badoualy.telegram.mtproto.secure.aes.AESImplementation;
 import com.github.badoualy.telegram.mtproto.secure.aes.DefaultAESImplementation;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.RandomAccessFile;
+import org.bouncycastle.crypto.digests.SHA512Digest;
+import org.bouncycastle.crypto.generators.PKCS5S2ParametersGenerator;
+import org.bouncycastle.crypto.params.KeyParameter;
+import java.io.*;
 import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
@@ -215,12 +213,20 @@ public final class CryptoUtils {
 
     public static byte[] SHA256(byte[] src) {
         try {
+            String a = "";
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             md.update(src);
             return md.digest();
         } catch (Exception e) {
         }
         return null;
+    }
+
+    public static byte[] getPBKDF2Hash(byte[] password, byte[] salt) {
+        PKCS5S2ParametersGenerator gen = new PKCS5S2ParametersGenerator(new SHA512Digest());
+        gen.init(password, salt, 100000);
+        return ((KeyParameter) gen.generateDerivedParameters(512)).getKey();
+
     }
 
     public static byte[] encodePasswordHash(byte[] salt, String password) {

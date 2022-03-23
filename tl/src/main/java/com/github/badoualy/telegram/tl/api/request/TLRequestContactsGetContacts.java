@@ -9,11 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static com.github.badoualy.telegram.tl.StreamUtils.readTLObject;
-import static com.github.badoualy.telegram.tl.StreamUtils.readTLString;
-import static com.github.badoualy.telegram.tl.StreamUtils.writeString;
-import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_CONSTRUCTOR_ID;
-import static com.github.badoualy.telegram.tl.TLObjectUtils.computeTLStringSerializedSize;
+import static com.github.badoualy.telegram.tl.StreamUtils.*;
+import static com.github.badoualy.telegram.tl.TLObjectUtils.*;
 
 /**
  * @author Yannick Badoual yann.badoual@gmail.com
@@ -21,16 +18,16 @@ import static com.github.badoualy.telegram.tl.TLObjectUtils.computeTLStringSeria
  */
 public class TLRequestContactsGetContacts extends TLMethod<TLAbsContacts> {
 
-    public static final int CONSTRUCTOR_ID = 0x22c6aa08;
+    public static final int CONSTRUCTOR_ID = 0x5dd69e12;
 
-    protected String hash;
+    protected long hash;
 
-    private final String _constructor = "contacts.getContacts#22c6aa08";
+    private final String _constructor = "contacts.getContacts#5dd69e12";
 
     public TLRequestContactsGetContacts() {
     }
 
-    public TLRequestContactsGetContacts(String hash) {
+    public TLRequestContactsGetContacts(long hash) {
         this.hash = hash;
     }
 
@@ -51,19 +48,19 @@ public class TLRequestContactsGetContacts extends TLMethod<TLAbsContacts> {
 
     @Override
     public void serializeBody(OutputStream stream) throws IOException {
-        writeString(hash, stream);
+        writeLong(hash, stream);
     }
 
     @Override
     @SuppressWarnings({"unchecked", "SimplifiableConditionalExpression"})
     public void deserializeBody(InputStream stream, TLContext context) throws IOException {
-        hash = readTLString(stream);
+        hash = readLong(stream);
     }
 
     @Override
     public int computeSerializedSize() {
         int size = SIZE_CONSTRUCTOR_ID;
-        size += computeTLStringSerializedSize(hash);
+        size += SIZE_INT64;
         return size;
     }
 
@@ -77,11 +74,11 @@ public class TLRequestContactsGetContacts extends TLMethod<TLAbsContacts> {
         return CONSTRUCTOR_ID;
     }
 
-    public String getHash() {
+    public long getHash() {
         return hash;
     }
 
-    public void setHash(String hash) {
+    public void setHash(long hash) {
         this.hash = hash;
     }
 }

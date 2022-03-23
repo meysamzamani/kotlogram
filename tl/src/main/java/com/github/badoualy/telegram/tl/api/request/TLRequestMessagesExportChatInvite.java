@@ -2,6 +2,8 @@ package com.github.badoualy.telegram.tl.api.request;
 
 import com.github.badoualy.telegram.tl.TLContext;
 import com.github.badoualy.telegram.tl.api.TLAbsExportedChatInvite;
+import com.github.badoualy.telegram.tl.api.TLAbsInputPeer;
+import com.github.badoualy.telegram.tl.api.TLAbsPeer;
 import com.github.badoualy.telegram.tl.core.TLMethod;
 import com.github.badoualy.telegram.tl.core.TLObject;
 
@@ -9,11 +11,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static com.github.badoualy.telegram.tl.StreamUtils.readInt;
-import static com.github.badoualy.telegram.tl.StreamUtils.readTLObject;
-import static com.github.badoualy.telegram.tl.StreamUtils.writeInt;
-import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_CONSTRUCTOR_ID;
-import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_INT32;
+import static com.github.badoualy.telegram.tl.StreamUtils.*;
+import static com.github.badoualy.telegram.tl.TLObjectUtils.*;
 
 /**
  * @author Yannick Badoual yann.badoual@gmail.com
@@ -21,17 +20,35 @@ import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_INT32;
  */
 public class TLRequestMessagesExportChatInvite extends TLMethod<TLAbsExportedChatInvite> {
 
-    public static final int CONSTRUCTOR_ID = 0x7d885289;
+    public static final int CONSTRUCTOR_ID = 0x14b9bcd7;
 
-    protected int chatId;
+    protected int flags;
 
-    private final String _constructor = "messages.exportChatInvite#7d885289";
+    protected boolean legacyRevokePermanent;
+
+    protected TLAbsInputPeer peer;
+
+    protected Integer expireDate;
+
+    protected Integer usageLimit;
+
+    private final String _constructor = "messages.exportChatInvite#14b9bcd7";
 
     public TLRequestMessagesExportChatInvite() {
     }
 
-    public TLRequestMessagesExportChatInvite(int chatId) {
-        this.chatId = chatId;
+    public TLRequestMessagesExportChatInvite(boolean legacyRevokePermanent, TLAbsInputPeer peer, Integer expireDate, Integer usageLimit) {
+        this.legacyRevokePermanent = legacyRevokePermanent;
+        this.peer = peer;
+        this.expireDate = expireDate;
+        this.usageLimit = usageLimit;
+    }
+
+    private void computeFlags() {
+        flags = 0;
+        flags = legacyRevokePermanent ? (flags | 4) : (flags & ~4);
+        flags = expireDate != null ? (flags | 1) : (flags & ~1);
+        flags = usageLimit != null ? (flags | 2) : (flags & ~2);
     }
 
     @Override
@@ -51,19 +68,38 @@ public class TLRequestMessagesExportChatInvite extends TLMethod<TLAbsExportedCha
 
     @Override
     public void serializeBody(OutputStream stream) throws IOException {
-        writeInt(chatId, stream);
+        writeTLObject(peer, stream);
+        if ((flags & 4) != 0) {
+            writeBoolean(legacyRevokePermanent, stream);
+        }
+        if ((flags & 1) != 0) {
+            if (expireDate == null) {
+                throwNullFieldException("expireDate", flags);
+            }
+            writeInt(expireDate, stream);
+        }
+        if ((flags & 2) != 0) {
+            if (usageLimit == null) {
+                throwNullFieldException("usageLimit", flags);
+            }
+            writeInt(usageLimit, stream);
+        }
     }
 
     @Override
     @SuppressWarnings({"unchecked", "SimplifiableConditionalExpression"})
     public void deserializeBody(InputStream stream, TLContext context) throws IOException {
-        chatId = readInt(stream);
+        peer = readTLObject(stream, context, TLAbsInputPeer.class, -1);
     }
 
     @Override
     public int computeSerializedSize() {
         int size = SIZE_CONSTRUCTOR_ID;
+        computeFlags();
+        size += SIZE_BOOLEAN;
         size += SIZE_INT32;
+        size += SIZE_INT32;
+        size += peer.computeSerializedSize();
         return size;
     }
 
@@ -77,11 +113,39 @@ public class TLRequestMessagesExportChatInvite extends TLMethod<TLAbsExportedCha
         return CONSTRUCTOR_ID;
     }
 
-    public int getChatId() {
-        return chatId;
+    public boolean isLegacyRevokePermanent() {
+        return legacyRevokePermanent;
     }
 
-    public void setChatId(int chatId) {
-        this.chatId = chatId;
+    public void setLegacyRevokePermanent(boolean legacyRevokePermanent) {
+        this.legacyRevokePermanent = legacyRevokePermanent;
+    }
+
+    public TLAbsInputPeer getPeer() {
+        return peer;
+    }
+
+    public void setPeer(TLAbsInputPeer peer) {
+        this.peer = peer;
+    }
+
+    public Integer getExpireDate() {
+        return expireDate;
+    }
+
+    public void setExpireDate(Integer expireDate) {
+        this.expireDate = expireDate;
+    }
+
+    public Integer getUsageLimit() {
+        return usageLimit;
+    }
+
+    public void setUsageLimit(Integer usageLimit) {
+        this.usageLimit = usageLimit;
+    }
+
+    public String get_constructor() {
+        return _constructor;
     }
 }

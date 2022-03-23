@@ -5,9 +5,9 @@ import com.github.badoualy.telegram.tl.core.TLObject;
 /**
  * Abstraction level for the following constructors:
  * <ul>
- * <li>{@link TLChatParticipant}: chatParticipant#c8d7493e</li>
- * <li>{@link TLChatParticipantAdmin}: chatParticipantAdmin#e2d6e436</li>
- * <li>{@link TLChatParticipantCreator}: chatParticipantCreator#da13538a</li>
+ * <li>{@link TLChatParticipant}: chatParticipant#c02d4007</li>
+ * <li>{@link TLChatParticipantAdmin}: chatParticipantAdmin#a0933f5b</li>
+ * <li>{@link TLChatParticipantCreator}: chatParticipantCreator#e46bcee4</li>
  * </ul>
  *
  * @author Yannick Badoual yann.badoual@gmail.com
@@ -15,16 +15,16 @@ import com.github.badoualy.telegram.tl.core.TLObject;
  */
 public abstract class TLAbsChatParticipant extends TLObject {
 
-    protected int userId;
+    protected long userId;
 
     public TLAbsChatParticipant() {
     }
 
-    public int getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 }

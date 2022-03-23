@@ -6,13 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static com.github.badoualy.telegram.tl.StreamUtils.readInt;
-import static com.github.badoualy.telegram.tl.StreamUtils.readTLString;
-import static com.github.badoualy.telegram.tl.StreamUtils.writeInt;
-import static com.github.badoualy.telegram.tl.StreamUtils.writeString;
-import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_CONSTRUCTOR_ID;
-import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_INT32;
-import static com.github.badoualy.telegram.tl.TLObjectUtils.computeTLStringSerializedSize;
+import static com.github.badoualy.telegram.tl.StreamUtils.*;
+import static com.github.badoualy.telegram.tl.TLObjectUtils.*;
 
 /**
  * @author Yannick Badoual yann.badoual@gmail.com
@@ -20,7 +15,7 @@ import static com.github.badoualy.telegram.tl.TLObjectUtils.computeTLStringSeria
  */
 public class TLMessageMediaContact extends TLAbsMessageMedia {
 
-    public static final int CONSTRUCTOR_ID = 0x5e7d2f39;
+    public static final int CONSTRUCTOR_ID = 0x70322949;
 
     protected String phoneNumber;
 
@@ -28,17 +23,20 @@ public class TLMessageMediaContact extends TLAbsMessageMedia {
 
     protected String lastName;
 
-    protected int userId;
+    protected String vcard;
 
-    private final String _constructor = "messageMediaContact#5e7d2f39";
+    protected long userId;
+
+    private final String _constructor = "messageMediaContact#70322949";
 
     public TLMessageMediaContact() {
     }
 
-    public TLMessageMediaContact(String phoneNumber, String firstName, String lastName, int userId) {
+    public TLMessageMediaContact(String phoneNumber, String firstName, String lastName, String vcard, long userId) {
         this.phoneNumber = phoneNumber;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.vcard = vcard;
         this.userId = userId;
     }
 
@@ -47,7 +45,8 @@ public class TLMessageMediaContact extends TLAbsMessageMedia {
         writeString(phoneNumber, stream);
         writeString(firstName, stream);
         writeString(lastName, stream);
-        writeInt(userId, stream);
+        writeString(vcard, stream);
+        writeLong(userId, stream);
     }
 
     @Override
@@ -56,6 +55,7 @@ public class TLMessageMediaContact extends TLAbsMessageMedia {
         phoneNumber = readTLString(stream);
         firstName = readTLString(stream);
         lastName = readTLString(stream);
+        vcard = readTLString(stream);
         userId = readInt(stream);
     }
 
@@ -65,7 +65,8 @@ public class TLMessageMediaContact extends TLAbsMessageMedia {
         size += computeTLStringSerializedSize(phoneNumber);
         size += computeTLStringSerializedSize(firstName);
         size += computeTLStringSerializedSize(lastName);
-        size += SIZE_INT32;
+        size += computeTLStringSerializedSize(vcard);
+        size += SIZE_INT64;
         return size;
     }
 
@@ -103,11 +104,19 @@ public class TLMessageMediaContact extends TLAbsMessageMedia {
         this.lastName = lastName;
     }
 
-    public int getUserId() {
+    public String getVcard() {
+        return vcard;
+    }
+
+    public void setVcard(String vcard) {
+        this.vcard = vcard;
+    }
+
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 }

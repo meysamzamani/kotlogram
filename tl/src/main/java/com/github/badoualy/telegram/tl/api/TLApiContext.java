@@ -1,13 +1,7 @@
 package com.github.badoualy.telegram.tl.api;
 
 import com.github.badoualy.telegram.tl.TLContext;
-import com.github.badoualy.telegram.tl.api.account.TLAuthorizations;
-import com.github.badoualy.telegram.tl.api.account.TLNoPassword;
-import com.github.badoualy.telegram.tl.api.account.TLPassword;
-import com.github.badoualy.telegram.tl.api.account.TLPasswordInputSettings;
-import com.github.badoualy.telegram.tl.api.account.TLPasswordSettings;
-import com.github.badoualy.telegram.tl.api.account.TLPrivacyRules;
-import com.github.badoualy.telegram.tl.api.account.TLTmpPassword;
+import com.github.badoualy.telegram.tl.api.account.*;
 import com.github.badoualy.telegram.tl.api.auth.TLCheckedPhone;
 import com.github.badoualy.telegram.tl.api.auth.TLCodeTypeCall;
 import com.github.badoualy.telegram.tl.api.auth.TLCodeTypeFlashCall;
@@ -119,6 +113,7 @@ public class TLApiContext extends TLContext {
         return instance;
     }
 
+    //TODO: rewrite to auto registration (foreach by all childs of TLObject)
     @Override
     public void init() {
         registerClass(TLAuthorizations.CONSTRUCTOR_ID, TLAuthorizations.class);
@@ -670,6 +665,21 @@ public class TLApiContext extends TLContext {
         registerClass(TLWebPage.CONSTRUCTOR_ID, TLWebPage.class);
         registerClass(TLWebPageEmpty.CONSTRUCTOR_ID, TLWebPageEmpty.class);
         registerClass(TLWebPageNotModified.CONSTRUCTOR_ID, TLWebPageNotModified.class);
-        registerClass(TLWebPagePending.CONSTRUCTOR_ID, TLWebPagePending.class);
+        registerClass(TLChatBannedRights.CONSTRUCTOR_ID, TLChatBannedRights.class);
+        registerClass(TLChatAdminRights.CONSTRUCTOR_ID, TLChatAdminRights.class);
+        registerClass(TLInputChannelFromMessage.CONSTRUCTOR_ID, TLInputChannelFromMessage.class);
+        registerClass(TLMessageReplies.CONSTRUCTOR_ID, TLMessageReplies.class);
+        registerClass(TLMessageReplyHeader.CONSTRUCTOR_ID, TLMessageReplyHeader.class);
+        registerClass(TLRestrictionReason.CONSTRUCTOR_ID, TLRestrictionReason.class);
+        registerClass(TLVideoSize.CONSTRUCTOR_ID, TLVideoSize.class);
+        registerClass(TLSponsoredMessages.CONSTRUCTOR_ID, TLSponsoredMessages.class);
+        registerClass(TLPasswordKdfAlgoSHA256SHA256PBKDF2HMACSHA512iter100000SHA256ModPow.CONSTRUCTOR_ID, TLPasswordKdfAlgoSHA256SHA256PBKDF2HMACSHA512iter100000SHA256ModPow.class);
+        registerClass(TLPasswordKdfAlgoUnknown.CONSTRUCTOR_ID, TLPasswordKdfAlgoUnknown.class);
+        registerClass(TLSecurePasswordKdfAlgoSHA512.CONSTRUCTOR_ID, TLSecurePasswordKdfAlgoSHA512.class);
+        registerClass(TLSecurePasswordKdfAlgoPBKDF2HMACSHA512iter100000.CONSTRUCTOR_ID, TLSecurePasswordKdfAlgoPBKDF2HMACSHA512iter100000.class);
+        registerClass(TLSecurePasswordKdfAlgoUnknown.CONSTRUCTOR_ID, TLSecurePasswordKdfAlgoUnknown.class);
+        registerClass(TLInputCheckPasswordEmpty.CONSTRUCTOR_ID, TLInputCheckPasswordEmpty.class);
+        registerClass(TLInputCheckPasswordSRP.CONSTRUCTOR_ID, TLInputCheckPasswordSRP.class);
+        registerClass(TLCodeSettings.CONSTRUCTOR_ID, TLCodeSettings.class);
     }
 }

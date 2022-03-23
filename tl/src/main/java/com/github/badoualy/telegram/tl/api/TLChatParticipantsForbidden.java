@@ -6,12 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static com.github.badoualy.telegram.tl.StreamUtils.readInt;
-import static com.github.badoualy.telegram.tl.StreamUtils.readTLObject;
-import static com.github.badoualy.telegram.tl.StreamUtils.writeInt;
-import static com.github.badoualy.telegram.tl.StreamUtils.writeTLObject;
-import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_CONSTRUCTOR_ID;
-import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_INT32;
+import static com.github.badoualy.telegram.tl.StreamUtils.*;
+import static com.github.badoualy.telegram.tl.TLObjectUtils.*;
 
 /**
  * @author Yannick Badoual yann.badoual@gmail.com
@@ -19,18 +15,18 @@ import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_INT32;
  */
 public class TLChatParticipantsForbidden extends TLAbsChatParticipants {
 
-    public static final int CONSTRUCTOR_ID = 0xfc900c2b;
+    public static final int CONSTRUCTOR_ID = 0x8763d3e1;
 
     protected int flags;
 
     protected TLAbsChatParticipant selfParticipant;
 
-    private final String _constructor = "chatParticipantsForbidden#fc900c2b";
+    private final String _constructor = "chatParticipantsForbidden#8763d3e1";
 
     public TLChatParticipantsForbidden() {
     }
 
-    public TLChatParticipantsForbidden(int chatId, TLAbsChatParticipant selfParticipant) {
+    public TLChatParticipantsForbidden(long chatId, TLAbsChatParticipant selfParticipant) {
         this.chatId = chatId;
         this.selfParticipant = selfParticipant;
     }
@@ -45,7 +41,7 @@ public class TLChatParticipantsForbidden extends TLAbsChatParticipants {
         computeFlags();
 
         writeInt(flags, stream);
-        writeInt(chatId, stream);
+        writeLong(chatId, stream);
         if ((flags & 1) != 0) {
             if (selfParticipant == null) throwNullFieldException("selfParticipant", flags);
             writeTLObject(selfParticipant, stream);
@@ -56,7 +52,7 @@ public class TLChatParticipantsForbidden extends TLAbsChatParticipants {
     @SuppressWarnings({"unchecked", "SimplifiableConditionalExpression"})
     public void deserializeBody(InputStream stream, TLContext context) throws IOException {
         flags = readInt(stream);
-        chatId = readInt(stream);
+        chatId = readLong(stream);
         selfParticipant = (flags & 1) != 0 ? readTLObject(stream, context, TLAbsChatParticipant.class, -1) : null;
     }
 
@@ -66,7 +62,7 @@ public class TLChatParticipantsForbidden extends TLAbsChatParticipants {
 
         int size = SIZE_CONSTRUCTOR_ID;
         size += SIZE_INT32;
-        size += SIZE_INT32;
+        size += SIZE_INT64;
         if ((flags & 1) != 0) {
             if (selfParticipant == null) throwNullFieldException("selfParticipant", flags);
             size += selfParticipant.computeSerializedSize();
@@ -84,11 +80,11 @@ public class TLChatParticipantsForbidden extends TLAbsChatParticipants {
         return CONSTRUCTOR_ID;
     }
 
-    public int getChatId() {
+    public long getChatId() {
         return chatId;
     }
 
-    public void setChatId(int chatId) {
+    public void setChatId(long chatId) {
         this.chatId = chatId;
     }
 

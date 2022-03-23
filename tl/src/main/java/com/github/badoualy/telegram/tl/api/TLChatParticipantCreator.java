@@ -6,10 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static com.github.badoualy.telegram.tl.StreamUtils.readInt;
-import static com.github.badoualy.telegram.tl.StreamUtils.writeInt;
-import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_CONSTRUCTOR_ID;
-import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_INT32;
+import static com.github.badoualy.telegram.tl.StreamUtils.*;
+import static com.github.badoualy.telegram.tl.TLObjectUtils.*;
 
 /**
  * @author Yannick Badoual yann.badoual@gmail.com
@@ -17,32 +15,32 @@ import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_INT32;
  */
 public class TLChatParticipantCreator extends TLAbsChatParticipant {
 
-    public static final int CONSTRUCTOR_ID = 0xda13538a;
+    public static final int CONSTRUCTOR_ID = 0xe46bcee4;
 
-    private final String _constructor = "chatParticipantCreator#da13538a";
+    private final String _constructor = "chatParticipantCreator#e46bcee4";
 
     public TLChatParticipantCreator() {
     }
 
-    public TLChatParticipantCreator(int userId) {
+    public TLChatParticipantCreator(long userId) {
         this.userId = userId;
     }
 
     @Override
     public void serializeBody(OutputStream stream) throws IOException {
-        writeInt(userId, stream);
+        writeLong(userId, stream);
     }
 
     @Override
     @SuppressWarnings({"unchecked", "SimplifiableConditionalExpression"})
     public void deserializeBody(InputStream stream, TLContext context) throws IOException {
-        userId = readInt(stream);
+        userId = readLong(stream);
     }
 
     @Override
     public int computeSerializedSize() {
         int size = SIZE_CONSTRUCTOR_ID;
-        size += SIZE_INT32;
+        size += SIZE_INT64;
         return size;
     }
 
@@ -56,11 +54,11 @@ public class TLChatParticipantCreator extends TLAbsChatParticipant {
         return CONSTRUCTOR_ID;
     }
 
-    public int getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 }
