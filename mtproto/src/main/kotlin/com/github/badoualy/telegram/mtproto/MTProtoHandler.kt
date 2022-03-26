@@ -453,7 +453,7 @@ class MTProtoHandler {
             }
         } catch (e: IOException) {
             logger.error(session.marker, "Unknown error", e) // Can't do anything better
-            logger.error(session.marker, "Hex dump ${StreamUtils.toHexString(message.payload)}")
+            //logger.error(session.marker, "Hex dump ${StreamUtils.toHexString(message.payload)}")
         }
     }
 
