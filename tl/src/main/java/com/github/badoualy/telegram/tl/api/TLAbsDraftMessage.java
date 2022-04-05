@@ -6,7 +6,7 @@ import com.github.badoualy.telegram.tl.core.TLObject;
  * Abstraction level for the following constructors:
  * <ul>
  * <li>{@link TLDraftMessage}: draftMessage#fd8e711f</li>
- * <li>{@link TLDraftMessageEmpty}: draftMessageEmpty#ba4baec5</li>
+ * <li>{@link TLDraftMessageEmpty}: draftMessageEmpty#1b0c841a</li>
  * </ul>
  *
  * @author Yannick Badoual yann.badoual@gmail.com

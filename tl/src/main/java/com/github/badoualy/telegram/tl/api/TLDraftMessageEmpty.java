@@ -6,9 +6,9 @@ package com.github.badoualy.telegram.tl.api;
  */
 public class TLDraftMessageEmpty extends TLAbsDraftMessage {
 
-    public static final int CONSTRUCTOR_ID = 0xba4baec5;
+    public static final int CONSTRUCTOR_ID = 0x1b0c841a;
 
-    private final String _constructor = "draftMessageEmpty#ba4baec5";
+    private final String _constructor = "draftMessageEmpty#1b0c841a";
 
     public TLDraftMessageEmpty() {
     }
