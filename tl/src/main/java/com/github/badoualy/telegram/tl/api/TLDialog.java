@@ -19,12 +19,13 @@ import static com.github.badoualy.telegram.tl.TLObjectUtils.SIZE_INT32;
  * @see <a href="http://github.com/badoualy/kotlogram">http://github.com/badoualy/kotlogram</a>
  */
 public class TLDialog extends TLObject {
-
-    public static final int CONSTRUCTOR_ID = 0x66ffba14;
+    public static final int CONSTRUCTOR_ID = 0x2c171f72;
 
     protected int flags;
 
     protected boolean pinned;
+
+    protected boolean unreadMark;
 
     protected TLAbsPeer peer;
 
@@ -36,13 +37,17 @@ public class TLDialog extends TLObject {
 
     protected int unreadCount;
 
+    protected int unreadMentionsCount;
+
     protected TLAbsPeerNotifySettings notifySettings;
 
     protected Integer pts;
 
     protected TLAbsDraftMessage draft;
 
-    private final String _constructor = "dialog#66ffba14";
+    protected int folderId;
+
+    private final String _constructor = "dialog#2c171f72";
 
     public TLDialog() {
     }
