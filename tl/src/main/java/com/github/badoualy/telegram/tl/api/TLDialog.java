@@ -52,16 +52,19 @@ public class TLDialog extends TLObject {
     public TLDialog() {
     }
 
-    public TLDialog(boolean pinned, TLAbsPeer peer, int topMessage, int readInboxMaxId, int readOutboxMaxId, int unreadCount, TLAbsPeerNotifySettings notifySettings, Integer pts, TLAbsDraftMessage draft) {
+    public TLDialog(boolean pinned, boolean unreadMark, TLAbsPeer peer, int topMessage, int readInboxMaxId, int readOutboxMaxId, int unreadCount, int unreadMentionsCount, TLAbsPeerNotifySettings notifySettings, Integer pts, TLAbsDraftMessage draft, int folderId) {
         this.pinned = pinned;
+        this.unreadMark = unreadMark;
         this.peer = peer;
         this.topMessage = topMessage;
         this.readInboxMaxId = readInboxMaxId;
         this.readOutboxMaxId = readOutboxMaxId;
         this.unreadCount = unreadCount;
+        this.unreadMentionsCount = unreadMentionsCount;
         this.notifySettings = notifySettings;
         this.pts = pts;
         this.draft = draft;
+        this.folderId = folderId;
     }
 
     private void computeFlags() {
@@ -97,14 +100,17 @@ public class TLDialog extends TLObject {
     public void deserializeBody(InputStream stream, TLContext context) throws IOException {
         flags = readInt(stream);
         pinned = (flags & 4) != 0;
+        unreadMark = (flags & 4) != 0;
         peer = readTLObject(stream, context, TLAbsPeer.class, -1);
         topMessage = readInt(stream);
         readInboxMaxId = readInt(stream);
         readOutboxMaxId = readInt(stream);
         unreadCount = readInt(stream);
+        unreadMentionsCount = readInt(stream);
         notifySettings = readTLObject(stream, context, TLAbsPeerNotifySettings.class, -1);
         pts = (flags & 1) != 0 ? readInt(stream) : null;
         draft = (flags & 2) != 0 ? readTLObject(stream, context, TLAbsDraftMessage.class, -1) : null;
+        folderId = readInt(stream);
     }
 
     @Override
@@ -113,7 +119,9 @@ public class TLDialog extends TLObject {
 
         int size = SIZE_CONSTRUCTOR_ID;
         size += SIZE_INT32;
+        size += SIZE_INT32;
         size += peer.computeSerializedSize();
+        size += SIZE_INT32;
         size += SIZE_INT32;
         size += SIZE_INT32;
         size += SIZE_INT32;
@@ -127,6 +135,7 @@ public class TLDialog extends TLObject {
             if (draft == null) throwNullFieldException("draft", flags);
             size += draft.computeSerializedSize();
         }
+        size += SIZE_INT32;
         return size;
     }
 
@@ -210,5 +219,21 @@ public class TLDialog extends TLObject {
 
     public void setDraft(TLAbsDraftMessage draft) {
         this.draft = draft;
+    }
+
+    public int getUnreadMentionsCount() {
+        return unreadMentionsCount;
+    }
+
+    public void setUnreadMentionsCount(int unreadMentionsCount) {
+        this.unreadMentionsCount = unreadMentionsCount;
+    }
+
+    public int getFolderId() {
+        return folderId;
+    }
+
+    public void setFolderId(int folderId) {
+        this.folderId = folderId;
     }
 }
