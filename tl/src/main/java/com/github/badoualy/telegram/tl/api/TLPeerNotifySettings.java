@@ -19,8 +19,7 @@ import static com.github.badoualy.telegram.tl.TLObjectUtils.computeTLStringSeria
  * @see <a href="http://github.com/badoualy/kotlogram">http://github.com/badoualy/kotlogram</a>
  */
 public class TLPeerNotifySettings extends TLAbsPeerNotifySettings {
-
-    public static final int CONSTRUCTOR_ID = 0x9acda4c0;
+    public static final int CONSTRUCTOR_ID = 0xaf509d20;
 
     protected int flags;
 
@@ -32,7 +31,7 @@ public class TLPeerNotifySettings extends TLAbsPeerNotifySettings {
 
     protected String sound;
 
-    private final String _constructor = "peerNotifySettings#9acda4c0";
+    private final String _constructor = "peerNotifySettings#af509d20";
 
     public TLPeerNotifySettings() {
     }
