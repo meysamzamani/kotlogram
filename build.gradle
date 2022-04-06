@@ -4,7 +4,7 @@ subprojects {
     apply plugin: "maven"
 
     version = "2.0.0"
-    group = 'com.github.badoualy'
+    group = 'com.github.meysamzamani'
 
     sourceCompatibility = '1.7'
     targetCompatibility = '1.7'
