@@ -5,7 +5,7 @@ import com.github.badoualy.telegram.tl.core.TLObject;
 /**
  * Abstraction level for the following constructors:
  * <ul>
- * <li>{@link TLGeoPoint}: geoPoint#2049d70c</li>
+ * <li>{@link TLGeoPoint}: geoPoint#b2a2f663</li>
  * <li>{@link TLGeoPointEmpty}: geoPointEmpty#1117dd5f</li>
  * </ul>
  *

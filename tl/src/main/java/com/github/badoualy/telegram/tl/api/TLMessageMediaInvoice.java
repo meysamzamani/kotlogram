@@ -37,7 +37,7 @@ public class TLMessageMediaInvoice extends TLAbsMessageMedia {
 
     protected String description;
 
-    protected TLWebDocument photo;
+    protected TLAbsWebDocument photo;
 
     protected Integer receiptMsgId;
 
@@ -52,7 +52,7 @@ public class TLMessageMediaInvoice extends TLAbsMessageMedia {
     public TLMessageMediaInvoice() {
     }
 
-    public TLMessageMediaInvoice(boolean shippingAddressRequested, boolean test, String title, String description, TLWebDocument photo, Integer receiptMsgId, String currency, long totalAmount, String startParam) {
+    public TLMessageMediaInvoice(boolean shippingAddressRequested, boolean test, String title, String description, TLAbsWebDocument photo, Integer receiptMsgId, String currency, long totalAmount, String startParam) {
         this.shippingAddressRequested = shippingAddressRequested;
         this.test = test;
         this.title = title;
@@ -100,8 +100,7 @@ public class TLMessageMediaInvoice extends TLAbsMessageMedia {
         test = (flags & 8) != 0;
         title = readTLString(stream);
         description = readTLString(stream);
-        photo = (flags & 1) != 0 ? readTLObject(stream, context, TLWebDocument.class,
-                                                TLWebDocument.CONSTRUCTOR_ID) : null;
+        photo = (flags & 1) != 0 ? readTLObject(stream, context, TLAbsWebDocument.class,-1) : null;
         receiptMsgId = (flags & 4) != 0 ? readInt(stream) : null;
         currency = readTLString(stream);
         totalAmount = readLong(stream);
@@ -172,11 +171,11 @@ public class TLMessageMediaInvoice extends TLAbsMessageMedia {
         this.description = description;
     }
 
-    public TLWebDocument getPhoto() {
+    public TLAbsWebDocument getPhoto() {
         return photo;
     }
 
-    public void setPhoto(TLWebDocument photo) {
+    public void setPhoto(TLAbsWebDocument photo) {
         this.photo = photo;
     }
 
