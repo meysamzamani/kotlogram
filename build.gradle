@@ -10,7 +10,6 @@ subprojects {
     targetCompatibility = '1.7'
 
     repositories {
-        jcenter()
         mavenCentral()
     }
 
